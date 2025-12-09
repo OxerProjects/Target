@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Target.Views.InfoDetailPage"
+             Title="{Binding Title}">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="0">
+
+            <!-- Logo -->
+            <Image Source="{Binding Logo}"
+                   HeightRequest="100"
+                   HorizontalOptions="Center"
+                   Margin="0,0,0,25"/>
+
+            <!-- Sector -->
+            <Label Text="{Binding Sector}"
+                   FontSize="15"
+                   Margin="0"
+                   Padding="0"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource Primary}"
+                   HorizontalOptions="Center" />
+
+            <!-- Name -->
+            <Label Text="{Binding Title}"
+                   FontSize="45"
+                   Padding="0"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" />
+
+            <Label Text="-------"
+                   FontSize="15"
+                   Padding="0"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource Primary}"
+                   HorizontalOptions="Center" 
+                   Margin="0,0,0,5"/>
+
+            <!-- Description -->
+            <Label Text="{Binding Description}"
+                   FontSize="20"
+                   LineBreakMode="WordWrap"
+                   FlowDirection="RightToLeft"
+                   Margin="0,0,0,15"/>
+
+            <Frame Padding="0"
+                   CornerRadius="20"
+                   IsClippedToBounds="True"
+                   HasShadow="False"
+                   HeightRequest="200"
+                   HorizontalOptions="Fill">
+                <Image Source="{Binding UnitImage}"
+                       Aspect="AspectFill"
+                       HorizontalOptions="Fill"
+                       VerticalOptions="Fill"/>
+            </Frame>
+    </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Target.Views.Register"
+             Shell.NavBarIsVisible="False" Shell.TabBarIsVisible="False"
+             FlowDirection="RightToLeft"
+             Title="Register">
+    <ScrollView HorizontalOptions="Center">
+        <VerticalStackLayout Spacing="10" Padding="30" HorizontalOptions="Center">
+
+            <!-- Logo -->
+            <Image Source="logo.png"
+               HeightRequest="50"
+               HorizontalOptions="Center"
+               Margin="0,20,0,20"/>
+
+            <!-- Title -->
+            <Label Text="הרשמה"
+               FontFamily="NarkisBold"
+               FontSize="50"
+               TextColor="White"
+               HorizontalOptions="Center"/>
+
+            <!-- FullName -->
+            <Border Stroke="{StaticResource Primary}"
+                StrokeThickness="2"
+                BackgroundColor="Transparent"
+                StrokeShape="RoundRectangle 15"
+                WidthRequest="300">
+                <Entry Placeholder="שם מלא"
+                   BackgroundColor="Transparent"
+                   TextColor="White"
+                   FontFamily="NarkisBold"
+                   FontSize="30"
+                   Margin="10,0"
+                   Text="{Binding FullName, Mode=TwoWay}"/>
+            </Border>
+            <Label
+                IsVisible="{Binding HasError}"
+                Text="{Binding FullNameError}" />
+
+            <!-- Email -->
+            <Border Stroke="{StaticResource Primary}"
+                StrokeThickness="2"
+                BackgroundColor="Transparent"
+                StrokeShape="RoundRectangle 15"
+                WidthRequest="300">
+                <Entry Placeholder="אימייל"
+                   Text="{Binding Email, Mode=TwoWay}"
+                   BackgroundColor="Transparent"
+                   TextColor="White"
+                   FontFamily="NarkisBold"
+                   FontSize="30"
+                   Margin="10,0"/>
+            </Border>
+
+            <!-- Phone -->
+            <Border Stroke="{StaticResource Primary}"
+                StrokeThickness="2"
+                BackgroundColor="Transparent"
+                StrokeShape="RoundRectangle 15"
+                WidthRequest="300">
+                <Entry Placeholder="טלפון"
+                   Text="{Binding MobileNo, Mode=TwoWay}"
+                   BackgroundColor="Transparent"
+                   TextColor="White"
+                   FontFamily="NarkisBold"
+                   FontSize="30"
+                   Margin="10,0"/>
+            </Border>
+
+            <!-- Age, Weight, Gender -->
+            <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                <Border Stroke="{StaticResource Primary}"
+                    StrokeThickness="2"
+                    BackgroundColor="Transparent"
+                    StrokeShape="RoundRectangle 15"
+                    WidthRequest="90">
+                    <DatePicker
+                       BackgroundColor="Transparent"
+                       TextColor="White"
+                       FontFamily="NarkisBold"
+                       FontSize="20"/>
+                </Border>
+
+                <!-- DateError -->
+                <Label
+                IsVisible="{Binding HasError}"
+                Style="{StaticResource ErrorLabelStyle}"
+                Text="{Binding BirthDateError}" />
+
+                <Border Stroke="{StaticResource Primary}"
+                    StrokeThickness="2"
+                    BackgroundColor="Transparent"
+                    StrokeShape="RoundRectangle 15"
+                    WidthRequest="90">
+                    <Entry Placeholder="גובה"
+                       Text="{Binding Height, Mode=TwoWay}"
+                       BackgroundColor="Transparent"
+                       TextColor="White"
+                       FontFamily="NarkisBold"
+                       FontSize="20"
+                       HorizontalTextAlignment="Center"/>
+                </Border>
+
+                <Border Stroke="{StaticResource Primary}"
+                    StrokeThickness="2"
+                    BackgroundColor="Transparent"
+                    StrokeShape="RoundRectangle 15"
+                    WidthRequest="90">
+                    <Entry Placeholder="משקל"
+                       Text="{Binding Weight, Mode=TwoWay}"
+                       BackgroundColor="Transparent"
+                       TextColor="White"
+                       FontFamily="NarkisBold"
+                       FontSize="20"
+                       HorizontalTextAlignment="Center"/>
+                </Border>
+            </HorizontalStackLayout>
+
+            <!-- Dropdown -->
+            <Border Stroke="{StaticResource Primary}"
+                StrokeThickness="2"
+                BackgroundColor="Transparent"
+                StrokeShape="RoundRectangle 15"
+                WidthRequest="300">
+                <Picker Title="אני מכוון ל..." 
+                    TextColor="White"
+                    FontFamily="NarkisBold"
+                    HorizontalTextAlignment="Center"
+                    FontSize="25"
+                    BackgroundColor="Transparent"/>
+            </Border>
+
+            <!-- Password -->
+            <Border Stroke="{StaticResource Primary}"
+                StrokeThickness="2"
+                BackgroundColor="Transparent"
+                StrokeShape="RoundRectangle 15"
+                WidthRequest="300">
+                <Entry Placeholder="סיסמה"
+                Text="{Binding Password, Mode=TwoWay}"
+                BackgroundColor="Transparent"
+                FontFamily="NarkisBold"
+                TextColor="White"
+                FontSize="30"
+                IsPassword="True"
+                Margin="10,0"/>
+
+            </Border>
+
+            <!-- Button -->
+            <Button Text="הרשם"
+                FontFamily="NarkisBold"
+                FontSize="30"
+                WidthRequest="300"
+                Padding="3"
+                TextColor="White"
+                BackgroundColor="{StaticResource Primary}"
+                CornerRadius="15"
+                HorizontalOptions="Center"
+                Margin="0,20,0,0"
+                Command="{Binding RegisterCommand}"
+                />
+
+            <Button
+            Text="חזור >"
+            FontFamily="NarkisBold"
+            FontSize="30"
+            WidthRequest="300"
+            Padding="3,3,3,3"
+            TextColor="White"
+            BackgroundColor="Transparent"
+            BorderColor="{StaticResource Primary}"
+            BorderWidth="2"
+            CornerRadius="15"
+            HorizontalOptions="Center"
+            Clicked="GoBack"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

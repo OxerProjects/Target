@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Target.Views.LogIn"
+             Shell.NavBarIsVisible="False" Shell.TabBarIsVisible="False"
+             FlowDirection="RightToLeft"
+             Title="LogIn">
+    <Grid RowDefinitions="Auto,*" Padding="30">
+        <!-- Logo -->
+        <Image Grid.Row="0"
+           Source="logo.png"
+           HeightRequest="50"
+           HorizontalOptions="Center"
+           VerticalOptions="Start"/>
+
+        <!-- LogInBox: -->
+        <VerticalStackLayout Grid.Row="1"
+        Spacing="20"
+        HorizontalOptions="Center"
+        VerticalOptions="Center">
+
+            <Label Text="התחברות"
+               FontFamily="NarkisBold"
+               FontSize="50"
+               HorizontalOptions="Center" />
+
+            <!-- Email -->
+            <Border Stroke="{StaticResource Primary}"
+                StrokeThickness="2"
+                BackgroundColor="Transparent"
+                StrokeShape="RoundRectangle 15"
+                WidthRequest="300">
+                <Entry 
+                   Placeholder="שם משתמש"
+                   Text="{Binding Email}"/>
+            </Border>
+
+            <!-- Password -->
+            <Border Stroke="{StaticResource Primary}"
+                StrokeThickness="2"
+                BackgroundColor="Transparent"
+                StrokeShape="RoundRectangle 15"
+                WidthRequest="300">
+                <Entry 
+                    Placeholder="סיסמה"
+                    Text="{Binding Password, Mode=TwoWay}"
+                    IsPassword="True"
+                    FlowDirection="RightToLeft"
+                    HorizontalTextAlignment="End"
+                    Style="{StaticResource AppEntryStyle}"/>
+
+            </Border>
+
+            <!-- error -->
+            <Label
+                IsVisible="{Binding HasError}"
+                TextColor="White"
+                FontSize="15"
+                Text="{Binding UsernameError}" />
+
+            <!-- Button -->
+            <Button Text="התחברות"
+                FontFamily="NarkisBold"
+                FontSize="30"
+                WidthRequest="300"
+                Padding="3"
+                TextColor="White"
+                BackgroundColor="{StaticResource Primary}"
+                CornerRadius="15"
+                HorizontalOptions="Center"
+                Command="{Binding LoginCommand}"/>
+
+            <Button
+                x:Name="BackButton"
+                Text="חזור >"
+                FontFamily="NarkisBold"
+                FontSize="30"
+                WidthRequest="300"
+                Padding="3,3,3,3"
+                TextColor="White"
+                BackgroundColor="Transparent"
+                BorderColor="{StaticResource Primary}"
+                BorderWidth="2"
+                CornerRadius="15"
+                HorizontalOptions="Center"
+                Clicked="GoBack"/>
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

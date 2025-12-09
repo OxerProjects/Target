@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Target.ViewModels"
+             x:Class="Target.Views.AddEventPage"
+             Title="הוסף פעילות">
+
+    <ScrollView>
+        <StackLayout Padding="20" Spacing="15">
+
+            <Label Text="שם האירוע" FontSize="18"/>
+            <Entry Text="{Binding Title}" Placeholder="הכנס שם פעילות" />
+
+            <Label Text="תיאור" FontSize="18"/>
+            <Editor Text="{Binding Description}" AutoSize="TextChanges" HeightRequest="100"/>
+
+            <Label Text="סוג פעילות" FontSize="18"/>
+            <Picker Title="בחר סוג פעילות" SelectedItem="{Binding Type}">
+                <Picker.Items>
+                    <x:String>אימון</x:String>
+                    <x:String>יום מיון</x:String>
+                    <x:String>אחר</x:String>
+                </Picker.Items>
+            </Picker>
+
+            <Label Text="שעת התחלה" FontSize="18"/>
+            <TimePicker Time="{Binding StartTime}" />
+
+            <Label Text="שעת סיום" FontSize="18"/>
+            <TimePicker Time="{Binding EndTime}" />
+
+            <Button Text="שמור פעילות" Command="{Binding SaveEventCommand}" />
+
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

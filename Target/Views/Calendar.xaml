@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Target.Views.Calendar"
+             x:Name="CalendarPage"
+             Title="יומן">
+
+    <Grid RowDefinitions="Auto,Auto,3*,2*" Padding="12" RowSpacing="10" >
+
+        <!-- כותרת חודש -->
+        <StackLayout Grid.Row="0" HorizontalOptions="Fill" Padding="0" Spacing="10">
+            <Grid HorizontalOptions="Center" ColumnDefinitions="Auto,*,Auto" BackgroundColor="#0e0e0e">
+                <Button Text="‹" Command="{Binding PreviousMonthCommand}" WidthRequest="50" Grid.Column="0"/>
+                <Label Text="{Binding CurrentMonthYear}" HorizontalOptions="Center" Grid.Column="1" FontSize="Large" VerticalOptions="Center"/>
+                <Button Text="›" Command="{Binding NextMonthCommand}" WidthRequest="50" Grid.Column="2"/>
+            </Grid>
+        </StackLayout>
+
+        <!-- כותרות ימים -->
+        <Grid Grid.Row="1" FlowDirection="RightToLeft" HorizontalOptions="Fill" ColumnSpacing="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Label Text="א" Grid.Column="6" FontFamily="NarkisBold" FontSize="25" HorizontalOptions="Center" />
+            <Label Text="ב" Grid.Column="5" FontFamily="NarkisBold" FontSize="25" HorizontalOptions="Center" />
+            <Label Text="ג" Grid.Column="4" FontFamily="NarkisBold" FontSize="25" HorizontalOptions="Center" />
+            <Label Text="ד" Grid.Column="3" FontFamily="NarkisBold" FontSize="25" HorizontalOptions="Center" />
+            <Label Text="ה" Grid.Column="2" FontFamily="NarkisBold" FontSize="25" HorizontalOptions="Center" />
+            <Label Text="ו" Grid.Column="1" FontFamily="NarkisBold" FontSize="25" HorizontalOptions="Center" />
+            <Label Text="ש" Grid.Column="0" FontFamily="NarkisBold" FontSize="25" HorizontalOptions="Center" />
+        </Grid>
+
+        <!-- יומן ימים -->
+        <CollectionView Grid.Row="2" ItemsSource="{Binding DaysInMonth}" SelectionMode="None" FlowDirection="RightToLeft">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="7"/>
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Button Text="{Binding Date.Day}"
+                            BackgroundColor="{Binding BackgroundColor}"
+                            TextColor="{Binding TextColor}"
+                            FontSize="25"
+                            CornerRadius="6"
+                            Command="{Binding Source={x:Reference CalendarPage}, Path=BindingContext.DayTappedCommand}"
+                            CommandParameter="{Binding .}"
+                            Padding="0"
+                            Margin="1"
+                            HeightRequest="40"/>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- חלונית אירועים -->
+        <Grid Grid.Row="3" BackgroundColor="{StaticResource Primary}" Padding="12" IsVisible="{Binding IsEventPanelVisible}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+                <Label Text="{Binding SelectedDate, StringFormat='אירועים ב־{0:dd/MM/yyyy}'}" FontSize="18" VerticalOptions="Center"/>
+                <Button Text="הוסף פעילות" Command="{Binding AddEventCommand}" HorizontalOptions="Fill" VerticalOptions="Center" />
+            </Grid>
+
+            <CollectionView Grid.Row="1" ItemsSource="{Binding EventsForSelectedDate}" Margin="0,8,0,0" SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Padding="10" CornerRadius="10" HasShadow="False" Margin="0,6" BackgroundColor="{StaticResource Primary}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackLayout>
+                                    <Label Text="{Binding Title}" FontSize="18" FontAttributes="Bold" />
+                                    <Label Text="{Binding StartTime, StringFormat='{0:hh\\:mm}'}" />
+                                    <Label Text="{Binding Description}" LineBreakMode="TailTruncation" MaxLines="2"/>
+                                </StackLayout>
+
+                                <Button Text="הצג" Grid.Column="1" Command="{Binding Source={x:Reference CalendarPage}, Path=BindingContext.ViewEventCommand}" CommandParameter="{Binding .}" />
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+    </Grid>
+</ContentPage>

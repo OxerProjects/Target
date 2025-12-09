@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="Target.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:Target.Views"
+    Shell.FlyoutBehavior="Disabled"
+    Title="Target">
+
+    <!-- MainPage -->
+    <ShellContent
+        Title="Home"
+        ContentTemplate="{DataTemplate views:MainPage}"
+        Route="MainPage">
+    </ShellContent>
+
+    <!-- LogIn -->
+    <ShellContent
+        Title="LogIn"
+        ContentTemplate="{DataTemplate views:LogIn}"
+        Route="LogIn">
+    </ShellContent>
+
+    <!-- Register -->
+    <ShellContent
+        Title="Register"
+        ContentTemplate="{DataTemplate views:Register}"
+        Route="Register">
+    </ShellContent>
+
+    <TabBar>
+        <!-- HomePage -->
+        <ShellContent
+            Title=""
+            Icon="homeicon.svg"
+            ContentTemplate="{DataTemplate views:HomePage}"
+            Route="HomePage">
+
+            <!-- Header -->
+            <Shell.TitleView>
+                <Grid ColumnDefinitions="Auto,*" Padding="10,0">
+                    <Image Source="icon.png"
+                        HeightRequest="24"
+                        VerticalOptions="Center" />
+
+                    <Label 
+                        x:Name="Date"
+                        Grid.Column="1"
+                        FlowDirection="RightToLeft"
+                        Text="מסך הבית"
+                        FontSize="25"
+                        FontFamily="NarkisBold"
+                        TextColor="#0e0e0e"
+                        VerticalOptions="Center"
+                        Margin="10,0,0,0" />
+                </Grid>
+            </Shell.TitleView>
+        </ShellContent>
+
+        <!-- Calender -->
+        <ShellContent
+            Title=""
+            Icon="calicon.svg"
+            ContentTemplate="{DataTemplate views:Calendar}"
+            Route="Calender">
+
+            <!-- Header -->
+            <Shell.TitleView>
+                <Grid ColumnDefinitions="Auto ,*" Padding="10,0" HorizontalOptions="Fill">
+                    <Image Source="icon.png"
+                        HeightRequest="24"
+                        VerticalOptions="Center" />
+
+                    <Label 
+                        Grid.Column="1"
+                        x:Name="Date2" 
+                        FlowDirection="RightToLeft"
+                        Text="יומן אימונים"
+                        FontSize="25"
+                        FontFamily="NarkisBold"
+                        TextColor="#ffffff"
+                        VerticalOptions="Center"
+                        Margin="10,0,0,0" />
+                </Grid>
+            </Shell.TitleView>
+        </ShellContent>
+
+        <!-- UnitInfo: -->
+        <ShellContent
+            Title=""
+            Icon="infoicon.svg"    
+            ContentTemplate="{DataTemplate views:Info}"
+            Route="Info">
+
+            <!-- Header -->
+            <Shell.TitleView>
+                <Grid ColumnDefinitions="Auto,*" Padding="10,0">
+                    <Image Source="icon.png"
+                        HeightRequest="24"
+                        VerticalOptions="Center" />
+
+                    <Label 
+                        Grid.Column="1"
+                        x:Name="Date3" 
+                        FlowDirection="RightToLeft"
+                        Text="15/09/2025"
+                        FontSize="25"
+                        FontFamily="NarkisBold"
+                        TextColor="#0e0e0e"
+                        VerticalOptions="Center"
+                        Margin="10,0,0,0" />
+                </Grid>
+            </Shell.TitleView>
+        </ShellContent>
+
+        <!-- LogOut -->
+        <ShellContent
+            Title=""
+            Icon="logouticon.svg"
+            ContentTemplate="{DataTemplate views:LogOut}"
+            Route="LogOut">
+        </ShellContent>
+    </TabBar>
+</Shell>
