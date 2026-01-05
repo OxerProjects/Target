@@ -1,0 +1,56 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             x:Class="Target.Views.AddTrainingPlanPage"
+             Title="הוספת תוכנית אימונים">
+
+    <ScrollView Padding="20">
+        <VerticalStackLayout Spacing="15">
+            <Label Text="{Binding UnitTitle}" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center"/>
+            <Label Text="הגדרת תקופה" FontSize="18" FontAttributes="Bold"/>
+
+            <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                <DatePicker TextColor="White" FontAttributes="Bold" FontSize="30" Date="{Binding StartDate}" Format="dd/MM/yyyy" MinimumDate="{Binding MinDate}" />
+                <Label Text="עד" FontSize="25" VerticalOptions="Center"/>
+                <DatePicker TextColor="White" FontAttributes="Bold" FontSize="30" Date="{Binding EndDate}" Format="dd/MM/yyyy" />
+            </HorizontalStackLayout>
+
+            <Label Text="בחר ימי אימון בשבוע:" 
+                FontSize="18" 
+                FontAttributes="Bold" 
+                HorizontalOptions="End" 
+                Margin="0,10"/>
+
+            <FlexLayout BindableLayout.ItemsSource="{Binding WeekDays}" 
+            Wrap="Wrap" 
+            Direction="RowReverse" 
+            JustifyContent="Start" 
+            FlowDirection="RightToLeft">
+
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <HorizontalStackLayout Padding="10" Spacing="5">
+                            <CheckBox IsChecked="{Binding IsSelected}" 
+                          Color="{StaticResource Primary}"/>
+                            <Label Text="{Binding Name}" 
+                       VerticalOptions="Center" 
+                       FontSize="25" 
+                       TextColor="White" />
+                        </HorizontalStackLayout>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </FlexLayout>
+
+            <Label Text="שעות האימון" FontSize="18" FontAttributes="Bold"/>
+            <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                <TimePicker Time="{Binding StartTime}" FontSize="30" Format="HH:mm"/>
+                <Label Text="עד" VerticalOptions="Center"/>
+                <TimePicker Time="{Binding EndTime}" FontSize="30" Format="HH:mm"/>
+            </HorizontalStackLayout>
+
+            <Button Text="צור תוכנית ביומן" 
+                    Command="{Binding CreatePlanCommand}"
+                    Margin="0,20,0,0" HeightRequest="60" CornerRadius="10" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

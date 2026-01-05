@@ -16,10 +16,13 @@ public partial class AddEventPage : ContentPage
     }
 
     // אם תרצה בנאי מיוחד – תשאיר אותו גם
-    public AddEventPage(FirebaseService service)
+    public AddEventPage(FirebaseService service, DateTime eventDate)
     {
         InitializeComponent();
-        _vm = new AddEventViewModel(service);
+        _vm = new AddEventViewModel(service)
+        {
+            EventDate = eventDate
+        };
         BindingContext = _vm;
     }
 }

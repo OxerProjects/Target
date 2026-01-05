@@ -54,6 +54,13 @@
                        HorizontalOptions="Fill"
                        VerticalOptions="Fill"/>
             </Frame>
-    </VerticalStackLayout>
+
+            <Button
+                Margin="0,30,0,0"
+                Text=" + הוספת תוכנית אימונים"
+                FontSize="25"
+                FontAttributes="Bold"
+                Clicked="OnAddTrainingPlanClicked" />
+        </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

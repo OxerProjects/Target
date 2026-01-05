@@ -5,11 +5,12 @@
              x:Name="CalendarPage"
              Title="יומן">
 
-    <Grid RowDefinitions="Auto,Auto,3*,2*" Padding="12" RowSpacing="10" >
+    <ScrollView>
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto" Padding="12" RowSpacing="10" >
 
         <!-- כותרת חודש -->
         <StackLayout Grid.Row="0" HorizontalOptions="Fill" Padding="0" Spacing="10">
-            <Grid HorizontalOptions="Center" ColumnDefinitions="Auto,*,Auto" BackgroundColor="#0e0e0e">
+            <Grid HorizontalOptions="Center" ColumnDefinitions="Auto,*,Auto" BackgroundColor="#0e0e0e" ColumnSpacing="10">
                 <Button Text="‹" Command="{Binding PreviousMonthCommand}" WidthRequest="50" Grid.Column="0"/>
                 <Label Text="{Binding CurrentMonthYear}" HorizontalOptions="Center" Grid.Column="1" FontSize="Large" VerticalOptions="Center"/>
                 <Button Text="›" Command="{Binding NextMonthCommand}" WidthRequest="50" Grid.Column="2"/>
@@ -59,39 +60,45 @@
         </CollectionView>
 
         <!-- חלונית אירועים -->
-        <Grid Grid.Row="3" BackgroundColor="{StaticResource Primary}" Padding="12" IsVisible="{Binding IsEventPanelVisible}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+        <ScrollView Grid.Row="3" IsVisible="{Binding IsEventPanelVisible}">
+            <StackLayout Padding="12" Spacing="10">
 
-            <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
-                <Label Text="{Binding SelectedDate, StringFormat='אירועים ב־{0:dd/MM/yyyy}'}" FontSize="18" VerticalOptions="Center"/>
-                <Button Text="הוסף פעילות" Command="{Binding AddEventCommand}" HorizontalOptions="Fill" VerticalOptions="Center" />
-            </Grid>
+                <!-- כותרת + כפתור הוספה -->
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="{Binding SelectedDate, StringFormat='אירועים ב־{0:dd/MM/yyyy}'}" FontSize="18" VerticalOptions="Center"/>
+                    <Button Text="+ הוסף פעילות" FontFamily="NarkisBold" FontSize="20" Command="{Binding AddEventCommand}" HorizontalOptions="Fill" VerticalOptions="Center" />
+                </Grid>
+                <!-- רשימת אירועים -->
+                <CollectionView ItemsSource="{Binding EventsForSelectedDate}" SelectionMode="None">
+                    
+                    <CollectionView.ItemTemplate>
+                        
+                        <DataTemplate>
+                            <Frame Padding="10" CornerRadius="10" HasShadow="False" Margin="0,6" BackgroundColor="{StaticResource Primary}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
 
-            <CollectionView Grid.Row="1" ItemsSource="{Binding EventsForSelectedDate}" Margin="0,8,0,0" SelectionMode="None">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Frame Padding="10" CornerRadius="10" HasShadow="False" Margin="0,6" BackgroundColor="{StaticResource Primary}">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
+                                    <Label Text="{Binding StartTime, StringFormat='{0:hh\\:mm}'}" FontSize="25"/>
 
-                                <StackLayout>
-                                    <Label Text="{Binding Title}" FontSize="18" FontAttributes="Bold" />
-                                    <Label Text="{Binding StartTime, StringFormat='{0:hh\\:mm}'}" />
-                                    <Label Text="{Binding Description}" LineBreakMode="TailTruncation" MaxLines="2"/>
-                                </StackLayout>
+                                    <StackLayout>
+                                        <Label Text="{Binding Title}" FontSize="20" FontAttributes="Bold" Margin="0" HorizontalOptions="End" FlowDirection="RightToLeft"/>
+                                        <Label Text="{Binding Description}" LineBreakMode="TailTruncation" MaxLines="2" FontSize="17" HorizontalOptions="End" FlowDirection="RightToLeft"/>
+                                    </StackLayout>
 
-                                <Button Text="הצג" Grid.Column="1" Command="{Binding Source={x:Reference CalendarPage}, Path=BindingContext.ViewEventCommand}" CommandParameter="{Binding .}" />
-                            </Grid>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                                    <ImageButton Source="show.svg" Margin="10,0,5,0" Grid.Column="1" Command="{Binding BindingContext.ViewEventCommand, Source={x:Reference CalendarPage}}" CommandParameter="{Binding .}" />
+
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </StackLayout>
+        </ScrollView>
+
         </Grid>
-    </Grid>
+    </ScrollView>
 </ContentPage>

@@ -10,8 +10,14 @@ namespace Target
 
             // --------------------- REGISTER ROUTES ---------------------
             Routing.RegisterRoute(nameof(Target.Views.InfoDetailPage), typeof(Target.Views.InfoDetailPage));
-            Routing.RegisterRoute("AddEventPage", typeof(AddEventPage));
+            Routing.RegisterRoute(nameof(EventDetailPage), typeof(EventDetailPage));
+            Routing.RegisterRoute(nameof(AddTrainingPlanPage), typeof(AddTrainingPlanPage));
+            Routing.RegisterRoute(nameof(AddEventPage), typeof(AddEventPage));
             Routing.RegisterRoute("Calender", typeof(Calendar));
+            Routing.RegisterRoute(nameof(Quiz), typeof(Quiz));
+
+            SecureStorage.SetAsync("GeminiKey", "AIzaSyCNeELWH7iYlikfr3qnBEpk7MqVg0IHYSo");
+
 
             // --------------------- SET CURRENT DATE ---------------------
             string currentDate = DateTime.Now.ToString("dd/MM/yyyy");

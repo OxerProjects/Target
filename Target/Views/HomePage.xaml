@@ -1,20 +1,82 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Target.Views.HomePage"
-             Title="HomePage">
-    <VerticalStackLayout Spacing="5" Padding="20">
+             x:Class="Target.Views.HomePage">
+
+    <VerticalStackLayout Spacing="20" Padding="20">
+
+        <!-- כותרת -->
         <Label 
-        Text="{Binding Title}"
-        FontSize="40"
-        FontFamily="NarkisBold"
-        FlowDirection="RightToLeft"
-        VerticalOptions="Center" 
-        HorizontalOptions="Center" />
-        <Label 
-        Text="---"
-        FontSize="25"
-        VerticalOptions="Center" 
-        HorizontalOptions="Center" />
+            Text="{Binding Title}"
+            FontSize="40"
+            FontFamily="NarkisBold"
+            FlowDirection="RightToLeft"
+            HorizontalOptions="Center" />
+
+        <Label Text="----"
+               FontSize="16"
+               TextColor="{StaticResource Gray100}"
+               FlowDirection="RightToLeft"
+               HorizontalOptions="Center"/>
+
+        <ImageButton
+            Source="quiz.png"
+            HeightRequest="100"
+            Margin="0"
+            CornerRadius="5"   
+            HorizontalOptions="Fill"
+            Command="{Binding GoToQuizCommand}"/>
+        
+        <!-- רשימת אירועים -->
+
+        <Label Text="אירועים היום"
+               FontSize="26"
+               FontAttributes="Bold"
+               FlowDirection="RightToLeft"
+               HorizontalOptions="End"/>
+        
+        <CollectionView ItemsSource="{Binding TodayEvents}"
+                        IsVisible="{Binding HasTodayEvents}"
+                        SelectionMode="None"
+                        FlowDirection="RightToLeft">
+
+            <CollectionView.ItemTemplate FlowDirection="RightToLeft"
+                HorizontalOptions="End"
+>
+                <DataTemplate>
+                    <Frame 
+                           Padding="10"
+                           BorderColor="Transparent"
+                           CornerRadius="0"
+                           HasShadow="False"
+                           BackgroundColor="{StaticResource BackgorundColor}">
+
+                        <Grid ColumnDefinitions="Auto,*,Auto">
+
+                            <Label Text="{Binding StartTime, StringFormat='{0:hh\\:mm}'}"
+                                   FontSize="22"/>
+
+                            <StackLayout Grid.Column="1"
+                                         FlowDirection="RightToLeft"
+                                         HorizontalOptions="End">
+                                <Label Text="{Binding Title}"
+                                       FontSize="18"
+                                       HorizontalOptions="Fill"
+                                       FlowDirection="RightToLeft"
+                                       HorizontalTextAlignment="Start" 
+                                       FontAttributes="Bold"/>
+                                <Label Text="{Binding Description}"
+                                       MaxLines="1"
+                                       FontSize="14"
+                                       LineBreakMode="TailTruncation"
+                                       FlowDirection="RightToLeft"
+                                       HorizontalTextAlignment="Start" />
+                            </StackLayout>
+
+                            <Frame Grid.Column="2" MaximumWidthRequest="7" BackgroundColor="{StaticResource Primary}" BorderColor="Transparent"/>
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
     </VerticalStackLayout>
 </ContentPage>

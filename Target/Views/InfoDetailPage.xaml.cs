@@ -53,4 +53,12 @@ public partial class InfoDetailPage : ContentPage
             await DisplayAlert("שגיאה", $"אירעה שגיאה בטעינת היחידה: {ex.Message}", "אוקיי");
         }
     }
+    private async void OnAddTrainingPlanClicked(object sender, EventArgs e)
+    {
+        if (CurrentUnit != null)
+        {
+            // ניווט לדף החדש עם שם היחידה כפרמטר
+            await Shell.Current.GoToAsync($"{nameof(AddTrainingPlanPage)}?UnitTitle={CurrentUnit.Title}");
+        }
+    }
 }

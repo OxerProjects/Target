@@ -1,8 +1,14 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.Maui.Storage;
 using Target.Models;
 using Target.Services;
+using System.Collections.Generic;
+using Target.Views;
 
 namespace Target.ViewModels
 {
@@ -10,17 +16,55 @@ namespace Target.ViewModels
     {
         private readonly FirebaseService firebaseService;
 
-        public ObservableCollection<CalendarDay> DaysInMonth { get; set; } = new();
-        public ObservableCollection<Event> AllEventsForMonth { get; set; } = new();
-        public ObservableCollection<Event> EventsForSelectedDate { get; set; } = new();
+        public ObservableCollection<CalendarDay> DaysInMonth { get; } = new();
+        public ObservableCollection<Event> AllEventsForMonth { get; } = new();
+        public ObservableCollection<Event> EventsForSelectedDate { get; } = new();
 
         private CalendarDay? _lastSelectedDay;
+        private bool _isLoadingEvents = false;
 
-        public DateTime CurrentMonth { get; set; } = DateTime.Today;
-        public DateTime SelectedDate { get; set; } = DateTime.Today;
-        public string IsEventPanelVisible { get; set; } = "False";
-        public string CurrentMonthYear { get; set; } = DateTime.Today.ToString("MMMM yyyy");
+        private DateTime _currentMonth = DateTime.Today;
+        public DateTime CurrentMonth
+        {
+            get => _currentMonth;
+            set
+            {
+                if (SetProperty(ref _currentMonth, value))
+                {
+                    CurrentMonthYear = _currentMonth.ToString("MMMM yyyy");
+                }
+            }
+        }
 
+        private DateTime _selectedDate = DateTime.Today;
+        public DateTime SelectedDate
+        {
+            get => _selectedDate;
+            set
+            {
+                if (SetProperty(ref _selectedDate, value))
+                {
+                    // תטען אירועים עבור התאריך החדש
+                    _ = LoadEventsForDayAsync(_selectedDate);
+                }
+            }
+        }
+
+        private bool _isEventPanelVisible = false;
+        public bool IsEventPanelVisible
+        {
+            get => _isEventPanelVisible;
+            set => SetProperty(ref _isEventPanelVisible, value);
+        }
+
+        private string _currentMonthYear;
+        public string CurrentMonthYear
+        {
+            get => _currentMonthYear;
+            set => SetProperty(ref _currentMonthYear, value);
+        }
+
+        // Commands
         public IRelayCommand PreviousMonthCommand { get; }
         public IRelayCommand NextMonthCommand { get; }
         public IRelayCommand<CalendarDay> DayTappedCommand { get; }
@@ -29,9 +73,7 @@ namespace Target.ViewModels
 
         public CalendarViewModel(FirebaseService service)
         {
-            Console.WriteLine("CalendarViewModel - CTOR CALLED");
-
-            firebaseService = service;
+            firebaseService = service ?? throw new ArgumentNullException(nameof(service));
 
             PreviousMonthCommand = new RelayCommand(GoToPreviousMonth);
             NextMonthCommand = new RelayCommand(GoToNextMonth);
@@ -39,22 +81,25 @@ namespace Target.ViewModels
             AddEventCommand = new RelayCommand(OnAddEvent);
             ViewEventCommand = new RelayCommand<Event>(OnViewEvent);
 
-            LoadMonth();
+            CurrentMonthYear = CurrentMonth.ToString("MMMM yyyy");
+
+            // התחל טעינה אסינכרונית (constructor לא יכול להיות async)
+            _ = LoadMonthAsync();
         }
 
         private void GoToPreviousMonth()
         {
             CurrentMonth = CurrentMonth.AddMonths(-1);
-            LoadMonth();
+            _ = LoadMonthAsync();
         }
 
         private void GoToNextMonth()
         {
             CurrentMonth = CurrentMonth.AddMonths(1);
-            LoadMonth();
+            _ = LoadMonthAsync();
         }
 
-        private void OnDayTapped(CalendarDay? day)
+        private async void OnDayTapped(CalendarDay? day)
         {
             if (day == null) return;
 
@@ -67,33 +112,33 @@ namespace Target.ViewModels
             _lastSelectedDay = day;
 
             SelectedDate = day.Date;
-            IsEventPanelVisible = "True";
+            IsEventPanelVisible = true;
 
-            Console.WriteLine(IsEventPanelVisible);
-
-            LoadEventsForDay(day.Date);        
+            await LoadEventsForDayAsync(SelectedDate);
         }
 
-        private async void LoadMonth()
+        private Task LoadMonthAsync()
         {
             CurrentMonthYear = CurrentMonth.ToString("MMMM yyyy");
             DaysInMonth.Clear();
 
             var firstDayOfMonth = new DateTime(CurrentMonth.Year, CurrentMonth.Month, 1);
-            var lastDayOfMonth = new DateTime(CurrentMonth.Year, CurrentMonth.Month, DateTime.DaysInMonth(CurrentMonth.Year, CurrentMonth.Month));
+            var lastDayOfMonth = new DateTime(
+                CurrentMonth.Year,
+                CurrentMonth.Month,
+                DateTime.DaysInMonth(CurrentMonth.Year, CurrentMonth.Month));
 
-            // שבוע מתחיל בשבת (ש) לפי ה־Grid שלנו (RightToLeft)
-            int daysBefore = ((int)firstDayOfMonth.DayOfWeek + 1) % 7; // 0=שבת, 1=ראשון...
+            int daysBefore = ((int)firstDayOfMonth.DayOfWeek + 1) % 7;
             int daysAfter = 6 - ((int)lastDayOfMonth.DayOfWeek + 1) % 7;
 
-            // ימים מהחודש הקודם
+            // חודש קודם
             for (int i = daysBefore; i > 0; i--)
             {
                 var date = firstDayOfMonth.AddDays(-i);
                 DaysInMonth.Add(new CalendarDay { Date = date, IsCurrentMonth = false });
             }
 
-            // ימים מהחודש הנוכחי
+            // חודש נוכחי
             for (int i = 0; i < DateTime.DaysInMonth(CurrentMonth.Year, CurrentMonth.Month); i++)
             {
                 var date = firstDayOfMonth.AddDays(i);
@@ -105,93 +150,81 @@ namespace Target.ViewModels
                 });
             }
 
-            // ימים מהחודש הבא
+            // חודש הבא
             for (int i = 1; i <= daysAfter; i++)
             {
                 var date = lastDayOfMonth.AddDays(i);
                 DaysInMonth.Add(new CalendarDay { Date = date, IsCurrentMonth = false });
             }
 
-
-            await LoadEventsForMonth();
-        }
-        private void LoadEventsForDay(DateTime date)
-        {
-            var userEmail = Preferences.Default.Get("userEmail", "");
-
-            var eventsToday = AllEventsForMonth
-                .Where(e => e.Date.Date == date.Date && e.CreatorEmail == userEmail)
-                .ToList();
-
-            EventsForSelectedDate.Clear();
-
-            foreach (var ev in eventsToday)
-                EventsForSelectedDate.Add(ev);
+            return Task.CompletedTask;
         }
 
-        private async Task LoadEventsForMonth()
+        private async Task LoadEventsForDayAsync(DateTime date)
         {
-            AllEventsForMonth.Clear();
+            if (_isLoadingEvents)
+                return;
 
-            var allEvents = await firebaseService.GetAllDocumentsAsync("events");
-            if (allEvents == null) return;
+            _isLoadingEvents = true;
 
-            string userEmail = Preferences.Default.Get("userEmail", "");
-
-            foreach (var entry in allEvents.Values)
+            try
             {
-                if (!entry.TryGetValue("CreatorEmail", out var creatorObj)) continue;
-                if (creatorObj?.ToString() != userEmail) continue;
+                EventsForSelectedDate.Clear();
 
-                if (!entry.TryGetValue("Date", out var dateObj)) continue;
-                if (!DateTime.TryParse(dateObj.ToString(), out var eventDate)) continue;
+                string userEmail = Preferences.Default.Get("userEmail", string.Empty);
+                var allEvents = await firebaseService.GetAllDocumentsAsync("events");
+                if (allEvents == null) return;
 
-                // רק אירועים שנמצאים בחודש הנוכחי
-                if (eventDate.Month != CurrentMonth.Month || eventDate.Year != CurrentMonth.Year)
-                    continue;
-
-                AllEventsForMonth.Add(new Event
+                foreach (var entry in allEvents.Values)
                 {
-                    Id = entry["Id"]?.ToString() ?? Guid.NewGuid().ToString(),
-                    Title = entry["Title"]?.ToString() ?? "",
-                    CreatorEmail = creatorObj.ToString(),
-                    Date = eventDate,
-                    Type = entry["Type"]?.ToString() ?? "אחר",
-                    StartTime = TimeSpan.Parse(entry["StartTime"]?.ToString() ?? "00:00"),
-                    EndTime = TimeSpan.Parse(entry["EndTime"]?.ToString() ?? "00:00"),
-                    Description = entry["Description"]?.ToString() ?? ""
-                });
-            }
+                    if (!entry.TryGetValue("CreatorEmail", out var creatorObj)) continue;
+                    if (!creatorObj?.ToString()
+                        .Equals(userEmail, StringComparison.OrdinalIgnoreCase) == true)
+                        continue;
 
-            // עדכון הימים ביומן
-            foreach (var day in DaysInMonth)
-            {
-                day.HasEvent = AllEventsForMonth.Any(e => e.Date.Date == day.Date.Date);
-            }
-        }
+                    if (!entry.TryGetValue("Date", out var dateObj)) continue;
+                    if (!DateTime.TryParse(dateObj?.ToString(), out var eventDate)) continue;
 
+                    if (eventDate.Date != date.Date) continue;
 
-        private void LoadEventsForSelectedDate()
-        {
-            EventsForSelectedDate.Clear();
-            foreach (var day in DaysInMonth)
-            {
-                if (day.Date.Date == SelectedDate.Date && day.HasEvent)
-                {
-                    // אירועים נוספים אם רוצים, או כבר טעון ב-LoadEventsForMonth
+                    var ev = new Event
+                    {
+                        Id = entry.ContainsKey("Id")
+                            ? entry["Id"]?.ToString() ?? Guid.NewGuid().ToString()
+                            : Guid.NewGuid().ToString(),
+                        Title = entry["Title"]?.ToString() ?? string.Empty,
+                        CreatorEmail = userEmail,
+                        Date = eventDate,
+                        Type = entry["Type"]?.ToString() ?? "אחר",
+                        StartTime = TimeSpan.TryParse(entry["StartTime"]?.ToString(), out var st) ? st : TimeSpan.Zero,
+                        EndTime = TimeSpan.TryParse(entry["EndTime"]?.ToString(), out var et) ? et : TimeSpan.Zero,
+                        Description = entry["Description"]?.ToString() ?? string.Empty
+                    };
+
+                    EventsForSelectedDate.Add(ev);
                 }
             }
+            finally
+            {
+                _isLoadingEvents = false;
+            }
         }
+
+
 
         private async void OnAddEvent()
         {
-            await Shell.Current.GoToAsync(nameof(Target.Views.AddEventPage));
+            // העבר את SelectedDate כפרמטר
+            await Shell.Current.GoToAsync(nameof(AddEventPage), new Dictionary<string, object>
+            {
+                { "EventDate", SelectedDate }
+            });
         }
 
         private async void OnViewEvent(Event? ev)
         {
             if (ev == null) return;
-            await Shell.Current.GoToAsync(nameof(Target.Views.EventDetailPage), new Dictionary<string, object>
+            await Shell.Current.GoToAsync(nameof(EventDetailPage), new Dictionary<string, object>
             {
                 ["EventId"] = ev.Id
             });

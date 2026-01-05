@@ -35,6 +35,11 @@ namespace Target
             builder.Services.AddSingleton<HomeViewModel>();
             builder.Services.AddSingleton<InfoViewModel>();
             builder.Services.AddSingleton<CalendarViewModel>();
+            builder.Services.AddTransient<AddEventViewModel>();
+            builder.Services.AddTransient<EventDetailViewModel>();
+            builder.Services.AddTransient<QuizViewModel>();
+            builder.Services.AddTransient<AddTrainingPlanPage>();
+            builder.Services.AddTransient<AddTrainingPlanViewModel>();
 
             // Views:
             builder.Services.AddSingleton<AppShell>();
@@ -45,6 +50,10 @@ namespace Target
             builder.Services.AddTransient<Info>();
             builder.Services.AddTransient<InfoDetailPage>();
             builder.Services.AddTransient<Calendar>();
+            builder.Services.AddTransient<AddEventPage>();
+            builder.Services.AddTransient<EventDetailPage>();
+            builder.Services.AddTransient<Quiz>();
+
 
 #endif
 

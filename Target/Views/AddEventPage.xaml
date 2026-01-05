@@ -8,28 +8,92 @@
     <ScrollView>
         <StackLayout Padding="20" Spacing="15">
 
-            <Label Text="שם האירוע" FontSize="18"/>
-            <Entry Text="{Binding Title}" Placeholder="הכנס שם פעילות" />
+            <!-- שם האירוע -->
+            <Label Text="שם האירוע" FontSize="18" TextColor="{StaticResource Gray200}" />
+            <Border Stroke="Gray" StrokeThickness="1" StrokeShape="RoundRectangle 8">
+                <Entry Text="{Binding Title}" HorizontalOptions="FillAndExpand" FlowDirection="RightToLeft" Placeholder="הכנס שם פעילות" />
+            </Border>
 
-            <Label Text="תיאור" FontSize="18"/>
-            <Editor Text="{Binding Description}" AutoSize="TextChanges" HeightRequest="100"/>
+            <!-- תיאור -->
+            <Label Text="תיאור" FontSize="18" TextColor="{StaticResource Gray200}" />
+            <Border Stroke="Gray" StrokeThickness="1" StrokeShape="RoundRectangle 8">
+                <Editor Text="{Binding Description}" FlowDirection="RightToLeft" AutoSize="TextChanges" HeightRequest="100" FontSize="20"/>
+            </Border>
 
-            <Label Text="סוג פעילות" FontSize="18"/>
-            <Picker Title="בחר סוג פעילות" SelectedItem="{Binding Type}">
-                <Picker.Items>
-                    <x:String>אימון</x:String>
-                    <x:String>יום מיון</x:String>
-                    <x:String>אחר</x:String>
-                </Picker.Items>
-            </Picker>
+            <!-- סוג פעילות -->
+            <Label Text="סוג פעילות" FontSize="18" TextColor="{StaticResource Gray200}" />
+            <Border Stroke="Gray"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 8"
+                    HorizontalOptions="Fill"
+                    Padding="4">
+                <Picker Title="בחר סוג פעילות"
+                        TextColor="White"
+                        SelectedItem="{Binding Type}"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="Start"
+                        FontSize="15">
+                    <Picker.Items>
+                        <x:String>אימון</x:String>
+                        <x:String>יום מיון</x:String>
+                        <x:String>אחר</x:String>
+                    </Picker.Items>
+                </Picker>
+            </Border>
 
-            <Label Text="שעת התחלה" FontSize="18"/>
-            <TimePicker Time="{Binding StartTime}" />
+            <!-- תאריך (אופציונלי אם צריך) -->
+            <Label Text="תאריך" FontSize="18" TextColor="{StaticResource Gray200}" />
+            <Border Stroke="Gray" StrokeThickness="1" StrokeShape="RoundRectangle 8">
+                <DatePicker TextColor="White" FontSize="30" HorizontalOptions="Center"
+                            Date="{Binding Date}" Format="dd/MM/yyyy"/>
+            </Border>
 
-            <Label Text="שעת סיום" FontSize="18"/>
-            <TimePicker Time="{Binding EndTime}" />
+            <!-- שעות התחלה וסיום -->
+            <Border Stroke="Gray"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 8"
+                    Padding="10">
 
-            <Button Text="שמור פעילות" Command="{Binding SaveEventCommand}" />
+                <Grid ColumnDefinitions="*,*"
+                      RowDefinitions="Auto,Auto"
+                      ColumnSpacing="15"
+                      RowSpacing="5">
+
+                    <!-- כותרות -->
+                    <Label Text="שעת התחלה"
+                           Grid.Row="0"
+                           Grid.Column="0"
+                           FontSize="16"
+                           HorizontalTextAlignment="Center"
+                           TextColor="{StaticResource Gray200}" />
+
+                    <Label Text="שעת סיום"
+                           Grid.Row="0"
+                           Grid.Column="1"
+                           FontSize="16"
+                           HorizontalTextAlignment="Center"
+                           TextColor="{StaticResource Gray200}" />
+
+                    <!-- TimePickers -->
+                    <TimePicker Grid.Row="1"
+                                Grid.Column="0"
+                                Time="{Binding StartTime}"
+                                Format="HH:mm"
+                                HorizontalOptions="Center" />
+
+                    <TimePicker Grid.Row="1"
+                                Grid.Column="1"
+                                Time="{Binding EndTime}"
+                                Format="HH:mm"
+                                HorizontalOptions="Center" />
+
+                </Grid>
+            </Border>
+
+            <!-- כפתור שמירה -->
+            <Button Text="צור פעילות"
+                    FontSize="20"
+                    Command="{Binding SaveEventCommand}" />
 
         </StackLayout>
     </ScrollView>
