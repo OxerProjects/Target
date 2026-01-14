@@ -155,31 +155,28 @@ namespace Target.Services
             Console.WriteLine("✅ All units uploaded successfully!");
         }
 
-
         public async Task<List<Unit>> GetAllUnitsAsync()
         {
             try
             {
+                // אנחנו שואבים את כל הצומת כרשימה אחת, כי זה פורמט מערך (Array)
                 var result = await firebaseClient
                     .Child("units")
-                    .OnceAsync<Unit>();
+                    .OnceSingleAsync<List<Unit>>();
 
-                return result.Select(item => new Unit
-                {
-                    Title = item.Object.Title,
-                    Description = item.Object.Description,
-                    Logo = item.Object.Logo,
-                    UnitImage = item.Object.UnitImage,
-                    Sector = item.Object.Sector
-                }).ToList();
+                if (result == null) return new List<Unit>();
+
+                // סינון ה-nullים שהופיעו בלוג שלך ושמירה רק על יחידות אמיתיות
+                return result
+                    .Where(u => u != null)
+                    .ToList();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error fetching units: {ex.Message}");
+                // זה ידפיס לך בדיוק מה השגיאה ב-Output
+                Console.WriteLine($"❌ Error fetching units: {ex.Message}");
                 return new List<Unit>();
             }
         }
-
-
     }
 }

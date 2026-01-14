@@ -52,6 +52,8 @@ namespace Target.ViewModels
             try
             {
                 // לולאה שעוברת יום יום מתאריך ההתחלה עד הסוף
+                string planGroupId = Guid.NewGuid().ToString();
+
                 for (DateTime date = StartDate; date <= EndDate; date = date.AddDays(1))
                 {
                     if (selectedDays.Contains(date.DayOfWeek))
@@ -66,20 +68,34 @@ namespace Target.ViewModels
                             StartTime = StartTime,
                             EndTime = EndTime,
                             CreatorEmail = userEmail,
-                            Participants = new List<string> { userEmail }
+                            Participants = new List<string> { userEmail },
+
+                            // השדות החדשים לזיהוי האימון
+                            RelatedUnit = UnitTitle,
+                            PlanGroupId = planGroupId
                         };
 
+                        // כאן התיקון - כל השדות ממופים ידנית:
                         await _firebaseService.SaveDocumentAsync("events", newEvent.Id, new Dictionary<string, object>
                         {
                             ["Id"] = newEvent.Id,
-                            ["Date"] = newEvent.Date.ToString("yyyy-MM-dd"),
                             ["Title"] = newEvent.Title,
                             ["Description"] = newEvent.Description,
                             ["Type"] = newEvent.Type,
-                            ["StartTime"] = newEvent.StartTime.ToString(),
-                            ["EndTime"] = newEvent.EndTime.ToString(),
+
+                            // שמירת התאריך בפורמט אחיד (שנה-חודש-יום) כדי שיהיה קל לסנן
+                            ["Date"] = newEvent.Date.ToString("yyyy-MM-dd"),
+
+                            // המרת TimeSpan ל-String פשוט (HH:mm)
+                            ["StartTime"] = newEvent.StartTime.ToString(@"hh\:mm"),
+                            ["EndTime"] = newEvent.EndTime.ToString(@"hh\:mm"),
+
                             ["CreatorEmail"] = newEvent.CreatorEmail,
-                            ["Participants"] = newEvent.Participants
+                            ["Participants"] = newEvent.Participants,
+
+                            // השדות החדשים שהוספנו
+                            ["RelatedUnit"] = newEvent.RelatedUnit,
+                            ["PlanGroupId"] = newEvent.PlanGroupId
                         });
                     }
                 }

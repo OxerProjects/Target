@@ -187,18 +187,23 @@ namespace Target.ViewModels
 
                     if (eventDate.Date != date.Date) continue;
 
+                    // בתוך LoadEventsForDayAsync ב-CalendarViewModel.cs
                     var ev = new Event
                     {
-                        Id = entry.ContainsKey("Id")
-                            ? entry["Id"]?.ToString() ?? Guid.NewGuid().ToString()
-                            : Guid.NewGuid().ToString(),
+                        Id = entry.ContainsKey("Id") ? entry["Id"]?.ToString() ?? Guid.NewGuid().ToString() : Guid.NewGuid().ToString(),
                         Title = entry["Title"]?.ToString() ?? string.Empty,
                         CreatorEmail = userEmail,
                         Date = eventDate,
-                        Type = entry["Type"]?.ToString() ?? "אחר",
-                        StartTime = TimeSpan.TryParse(entry["StartTime"]?.ToString(), out var st) ? st : TimeSpan.Zero,
-                        EndTime = TimeSpan.TryParse(entry["EndTime"]?.ToString(), out var et) ? et : TimeSpan.Zero,
-                        Description = entry["Description"]?.ToString() ?? string.Empty
+                        Type = entry.ContainsKey("Type") ? entry["Type"]?.ToString() : "אחר",
+                        StartTime = TimeSpan.TryParse(entry.ContainsKey("StartTime") ? entry["StartTime"]?.ToString() : "00:00", out var st) ? st : TimeSpan.Zero,
+                        EndTime = TimeSpan.TryParse(entry.ContainsKey("EndTime") ? entry["EndTime"]?.ToString() : "00:00", out var et) ? et : TimeSpan.Zero,
+                        Description = entry.ContainsKey("Description") ? entry["Description"]?.ToString() : string.Empty,
+
+                        // --- הוסף את השורות האלו כאן: ---
+                        // אנחנו חייבים למשוך את הנתונים מה-Dictionary שחזר מ-Firebase
+                        RelatedUnit = entry.ContainsKey("RelatedUnit") ? entry["RelatedUnit"]?.ToString() : null,
+                        PlanGroupId = entry.ContainsKey("PlanGroupId") ? entry["PlanGroupId"]?.ToString() : null
+                        // -------------------------------
                     };
 
                     EventsForSelectedDate.Add(ev);
@@ -224,10 +229,25 @@ namespace Target.ViewModels
         private async void OnViewEvent(Event? ev)
         {
             if (ev == null) return;
-            await Shell.Current.GoToAsync(nameof(EventDetailPage), new Dictionary<string, object>
+
+            // בדיקה: האם זה אימון יחידה?
+            if (!string.IsNullOrEmpty(ev.RelatedUnit))
             {
-                ["EventId"] = ev.Id
-            });
+                // ניווט לדף האימון המיוחד
+                var navParams = new Dictionary<string, object>
+                {
+                    { "WorkoutEvent", ev }
+                };
+                await Shell.Current.GoToAsync(nameof(WorkoutDetailPage), navParams);
+            }
+            else
+            {
+                // ניווט לדף אירוע רגיל
+                await Shell.Current.GoToAsync(nameof(EventDetailPage), new Dictionary<string, object>
+                {
+                    ["EventId"] = ev.Id
+                });
+            }
         }
     }
 }

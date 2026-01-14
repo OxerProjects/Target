@@ -12,7 +12,9 @@ namespace Target
             Routing.RegisterRoute(nameof(Target.Views.InfoDetailPage), typeof(Target.Views.InfoDetailPage));
             Routing.RegisterRoute(nameof(EventDetailPage), typeof(EventDetailPage));
             Routing.RegisterRoute(nameof(AddTrainingPlanPage), typeof(AddTrainingPlanPage));
-            Routing.RegisterRoute(nameof(AddEventPage), typeof(AddEventPage));
+            Routing.RegisterRoute(nameof(EventDetailPage), typeof(EventDetailPage));
+            Routing.RegisterRoute(nameof(AddTrainingPlanPage), typeof(AddTrainingPlanPage));
+            Routing.RegisterRoute(nameof(WorkoutDetailPage), typeof(WorkoutDetailPage));
             Routing.RegisterRoute("Calender", typeof(Calendar));
             Routing.RegisterRoute(nameof(Quiz), typeof(Quiz));
 

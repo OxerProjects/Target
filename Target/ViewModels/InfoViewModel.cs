@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows.Input;
 using Target.Models;
 using Target.Services;
@@ -36,26 +37,20 @@ namespace Target.ViewModels
             try
             {
                 IsLoading = true;
-
                 var unitsFromDb = await _firebaseService.GetAllUnitsAsync();
 
                 Units.Clear();
                 foreach (var unit in unitsFromDb)
                 {
-                    // עדכון הנתיב המלא ללוגו ולתמונה
-                    if (!string.IsNullOrEmpty(unit.Logo))
-                        unit.Logo = $"{unit.Logo}";
-
-                    if (!string.IsNullOrEmpty(unit.UnitImage))
-                        unit.UnitImage = $"{unit.UnitImage}";
+                    // בדיקת בטיחות שהיחידה והכותרת קיימים
+                    if (unit == null || string.IsNullOrEmpty(unit.Title)) continue;
 
                     Units.Add(unit);
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                if (Application.Current?.MainPage != null)
-                    await Application.Current.MainPage.DisplayAlert("שגיאה", $"טעינת היחידות נכשלה: {ex.Message}", "אוקיי");
+                Debug.WriteLine($"Error: {ex.Message}");
             }
             finally
             {

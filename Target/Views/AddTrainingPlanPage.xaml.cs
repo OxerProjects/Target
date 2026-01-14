@@ -4,9 +4,11 @@ namespace Target.Views;
 
 public partial class AddTrainingPlanPage : ContentPage
 {
+    // מזריקים את ה-ViewModel בבנאי
     public AddTrainingPlanPage(AddTrainingPlanViewModel viewModel)
     {
         InitializeComponent();
-        BindingContext = viewModel; // שורה זו קריטית!
+        // מחברים את הדף ל-ViewModel
+        BindingContext = viewModel;
     }
 }

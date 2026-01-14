@@ -40,6 +40,7 @@ namespace Target
             builder.Services.AddTransient<QuizViewModel>();
             builder.Services.AddTransient<AddTrainingPlanPage>();
             builder.Services.AddTransient<AddTrainingPlanViewModel>();
+            builder.Services.AddTransient<WorkoutDetailViewModel>();
 
             // Views:
             builder.Services.AddSingleton<AppShell>();
@@ -53,6 +54,7 @@ namespace Target
             builder.Services.AddTransient<AddEventPage>();
             builder.Services.AddTransient<EventDetailPage>();
             builder.Services.AddTransient<Quiz>();
+            builder.Services.AddTransient<WorkoutDetailPage>();
 
 
 #endif

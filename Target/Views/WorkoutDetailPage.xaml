@@ -1,0 +1,59 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Target.ViewModels"
+             xmlns:services="clr-namespace:Target.Services"
+             x:Class="Target.Views.WorkoutDetailPage"
+             Title="{Binding PageTitle}">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="15" Padding="20">
+
+            <Border StrokeShape="RoundRectangle 10" BackgroundColor="#2C2C2C" Padding="15">
+                <VerticalStackLayout>
+                    <Label Text="{Binding EventData.Date, StringFormat='{0:dd/MM/yyyy}'}" TextColor="Gray"/>
+                    <Label Text="{Binding EventData.Title}" FontSize="24" FontAttributes="Bold" TextColor="White"/>
+                    <Label Text="{Binding EventData.Description}" TextColor="#E0E0E0"/>
+                    <HorizontalStackLayout Spacing="10" Margin="0,10,0,0">
+                        <Label Text="{Binding EventData.StartTime, StringFormat='{0:hh\\:mm}'}" TextColor="#FFD700"/>
+                        <Label Text="-" TextColor="#FFD700"/>
+                        <Label Text="{Binding EventData.EndTime, StringFormat='{0:hh\\:mm}'}" TextColor="#FFD700"/>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="תרגילים:" FontSize="20" FontAttributes="Bold" Margin="0,10,0,5"/>
+
+            <CollectionView ItemsSource="{Binding Exercises}" HeightRequest="400">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Stroke="Gray" StrokeThickness="1" StrokeShape="RoundRectangle 10" Margin="0,5" Padding="10" BackgroundColor="#1E1E1E">
+                            <Grid ColumnDefinitions="Auto, *">
+                                <Image Grid.Column="0" 
+                           Source="dumbbell_icon.png" 
+                           WidthRequest="50" 
+                           HeightRequest="50" 
+                           Aspect="AspectFit" 
+                           Margin="0,0,10,0"/>
+
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Label Text="{Binding Name}" FontSize="18" FontAttributes="Bold" TextColor="White"/>
+                                    <Label Text="{Binding Description}" FontSize="14" TextColor="#CCCCCC"/>
+                                    <Label Text="{Binding DurationOrReps}" FontSize="14" FontAttributes="Bold" TextColor="#FFD700" Margin="0,5,0,0"/>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Button Text="מחק אימון זה בלבד" 
+                    Command="{Binding DeleteSingleWorkoutCommand}" 
+                    BackgroundColor="#505050" TextColor="White" CornerRadius="10"/>
+
+            <Button Text="🗑 מחק את כל תוכנית האימונים" 
+                    Command="{Binding DeleteEntirePlanCommand}" 
+                    BackgroundColor="#8B0000" TextColor="White" CornerRadius="10" Margin="0,10,0,20"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

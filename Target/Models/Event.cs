@@ -11,5 +11,8 @@
         public string CreatorEmail { get; set; } = string.Empty;
         public List<string> Participants { get; set; } = new();
         public string Description { get; set; } = string.Empty;
+
+        public string? RelatedUnit { get; set; } // שם היחידה (למשל "504")
+        public string? PlanGroupId { get; set; } // מזהה ייחודי לכל התוכנית שנוצרה יחד
     }
 }
