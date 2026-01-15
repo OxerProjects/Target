@@ -1,82 +1,117 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Target.Views.HomePage">
+             xmlns:vm="clr-namespace:Target.ViewModels" 
+             x:Class="Target.Views.HomePage"
+             FlowDirection="RightToLeft">
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Padding="20">
 
-    <VerticalStackLayout Spacing="20" Padding="20">
+            <Label Text="{Binding Title}"
+                   FontSize="32"
+                   FontFamily="NarkisBold"
+                   HorizontalOptions="Center" 
+                   TextColor="White"/>
 
-        <!-- כותרת -->
-        <Label 
-            Text="{Binding Title}"
-            FontSize="40"
-            FontFamily="NarkisBold"
-            FlowDirection="RightToLeft"
-            HorizontalOptions="Center" />
+            <ImageButton Source="quiz.png"
+                         HeightRequest="90"
+                         HorizontalOptions="Fill"
+                         Command="{Binding GoToQuizCommand}"
+                         CornerRadius="5"   />
 
-        <Label Text="----"
-               FontSize="16"
-               TextColor="{StaticResource Gray100}"
-               FlowDirection="RightToLeft"
-               HorizontalOptions="Center"/>
+            <Border StrokeShape="RoundRectangle 15" BackgroundColor="#252525" StrokeThickness="0" Padding="15">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="השבוע שלי" FontSize="20" FontAttributes="Bold" TextColor="White"/>
 
-        <ImageButton
-            Source="quiz.png"
-            HeightRequest="100"
-            Margin="0"
-            CornerRadius="5"   
-            HorizontalOptions="Fill"
-            Command="{Binding GoToQuizCommand}"/>
-        
-        <!-- רשימת אירועים -->
+                    <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto, Auto">
+                        <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center">
+                            <Label Text="{Binding WeeklyCompleted}" FontSize="35" FontAttributes="Bold" TextColor="{StaticResource Primary}" HorizontalOptions="Center"/>
+                            <Label Text="בוצעו" FontSize="20" TextColor="Gray" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
 
-        <Label Text="אירועים היום"
-               FontSize="26"
-               FontAttributes="Bold"
-               FlowDirection="RightToLeft"
-               HorizontalOptions="End"/>
-        
-        <CollectionView ItemsSource="{Binding TodayEvents}"
-                        IsVisible="{Binding HasTodayEvents}"
-                        SelectionMode="None"
-                        FlowDirection="RightToLeft">
+                        <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center">
+                            <Label Text="{Binding WeeklyTotal}" FontSize="35" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center"/>
+                            <Label Text="יעדים" FontSize="20" TextColor="Gray" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
 
-            <CollectionView.ItemTemplate FlowDirection="RightToLeft"
-                HorizontalOptions="End"
->
-                <DataTemplate>
-                    <Frame 
-                           Padding="10"
-                           BorderColor="Transparent"
-                           CornerRadius="0"
-                           HasShadow="False"
-                           BackgroundColor="{StaticResource BackgorundColor}">
+                        <VerticalStackLayout Grid.Column="2" HorizontalOptions="Center">
+                            <Label Text="{Binding WeeklyMissed}" FontSize="35" FontAttributes="Bold" TextColor="#FF4444" HorizontalOptions="Center"/>
+                            <Label Text="פוספסו" FontSize="20" TextColor="Gray" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                    </Grid>
 
-                        <Grid ColumnDefinitions="Auto,*,Auto">
+                    <ProgressBar Progress="{Binding WeeklyProgress}" ProgressColor="{StaticResource PrimaryDark}" HeightRequest="10" Margin="0,10,0,0"/>
+                    <Label Text="{Binding WeeklyProgress, StringFormat='הושלמו {0:P0} מהיעדים השבוע'}" 
+                           FontSize="20" TextColor="#CCCCCC" HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+            </Border>
 
-                            <Label Text="{Binding StartTime, StringFormat='{0:hh\\:mm}'}"
-                                   FontSize="22"/>
+            <Label Text="התוכניות שלי:" FontSize="20" FontAttributes="Bold" TextColor="White" Margin="0,10,0,0"/>
 
-                            <StackLayout Grid.Column="1"
-                                         FlowDirection="RightToLeft"
-                                         HorizontalOptions="End">
-                                <Label Text="{Binding Title}"
-                                       FontSize="18"
-                                       HorizontalOptions="Fill"
-                                       FlowDirection="RightToLeft"
-                                       HorizontalTextAlignment="Start" 
-                                       FontAttributes="Bold"/>
-                                <Label Text="{Binding Description}"
-                                       MaxLines="1"
-                                       FontSize="14"
-                                       LineBreakMode="TailTruncation"
-                                       FlowDirection="RightToLeft"
-                                       HorizontalTextAlignment="Start" />
-                            </StackLayout>
+            <CollectionView ItemsSource="{Binding DashboardStats}" HeightRequest="130">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15"/>
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border StrokeShape="RoundRectangle 15" BackgroundColor="#1E1E1E" WidthRequest="160" Padding="15" Stroke="Gray" StrokeThickness="1">
+                            <VerticalStackLayout Spacing="5" VerticalOptions="Center">
+                                <Label Text="{Binding PlanName}" FontSize="25" FontAttributes="Bold" TextColor="{StaticResource Primary}" HorizontalOptions="End" FlowDirection="RightToLeft" LineBreakMode="TailTruncation"/>
+                                <Label Text="{Binding CompletedWorkouts, StringFormat='בוצעו: {0}'}" FontSize="15" TextColor="#00FF00"/>
+                                <Label Text="{Binding MissedWorkouts, StringFormat='פוספסו: {0}'}" FontSize="15" TextColor="#FF4444"/>
+                                <ProgressBar Progress="{Binding ProgressPercentage}" ProgressColor="{StaticResource PrimaryDark}" HeightRequest="6" Margin="0,5,0,0"/>
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <Label Text="אין תוכניות פעילות כרגע" TextColor="Gray" HorizontalOptions="Center" VerticalOptions="Center"/>
+                </CollectionView.EmptyView>
+            </CollectionView>
 
-                            <Frame Grid.Column="2" MaximumWidthRequest="7" BackgroundColor="{StaticResource Primary}" BorderColor="Transparent"/>
-                        </Grid>
-                    </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-    </VerticalStackLayout>
+
+            <Label Text="אירועים:"
+                   FontSize="22"
+                   FontAttributes="Bold"
+                   Margin="0,10,0,0"/>
+
+            <CollectionView ItemsSource="{Binding TodayEvents}"
+                            IsVisible="{Binding HasTodayEvents}"
+                            SelectionMode="None"
+                            HeightRequest="200">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Padding="10"
+                               Margin="0,0,0,10" 
+                               BorderColor="Transparent"
+                               CornerRadius="10"
+                               HasShadow="False"
+                               BackgroundColor="#333333">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer 
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HomeViewModel}}, Path=ViewEventCommand}"
+                                    CommandParameter="{Binding .}"/>
+                            </Frame.GestureRecognizers>
+
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                <Label Text="{Binding StartTime, StringFormat='{0:hh\\:mm}'}"
+                                       FontSize="18" TextColor="#FFD700" VerticalOptions="Center"/>
+
+                                <VerticalStackLayout Grid.Column="1" Margin="15,0">
+                                    <Label Text="{Binding Title}" FontSize="16" FontAttributes="Bold" TextColor="White"/>
+                                    <Label Text="{Binding Description}" FontSize="12" TextColor="Gray" LineBreakMode="TailTruncation"/>
+                                </VerticalStackLayout>
+
+                                <BoxView Grid.Column="2" WidthRequest="4" Color="{StaticResource Primary}" VerticalOptions="Fill"/>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+                <CollectionView.EmptyView>
+                    <Label Text="אין אימונים להיום, זמן למנוחה! 😴" TextColor="Gray" HorizontalOptions="Center" Margin="0,20,0,0"/>
+                </CollectionView.EmptyView>
+            </CollectionView>
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

@@ -29,6 +29,8 @@ namespace Target.Services
             firebaseClient = new FirebaseClient("https://target-database-d8d36-default-rtdb.firebaseio.com/");
         }
 
+        #region Authentication
+
         public async Task<UserCredential> RegisterAsync(string email, string password)
         {
             return await auth.CreateUserWithEmailAndPasswordAsync(email, password);
@@ -38,6 +40,10 @@ namespace Target.Services
         {
             return await auth.SignInWithEmailAndPasswordAsync(email, password);
         }
+
+        #endregion
+
+        #region Generic CRUD
 
         public async Task SaveDocumentAsync(string collection, string docId, Dictionary<string, object> data)
         {
@@ -75,21 +81,6 @@ namespace Target.Services
             }
         }
 
-        //public async Task AddUserWorkoutAsync(UserWorkout workout)
-        //{
-        //    try
-        //    {
-        //        await firebaseClient
-        //            .Child("UserWorkouts")
-        //            .Child(workout.UserId)
-        //            .PostAsync(workout);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Error saving workout: {ex.Message}");
-        //    }
-        //}
-
         public async Task<Dictionary<string, Dictionary<string, object>>?> GetAllDocumentsAsync(string collection)
         {
             try
@@ -110,7 +101,6 @@ namespace Target.Services
             }
         }
 
-
         public async Task<Dictionary<string, object>?> GetDocumentAsync(string collection, string docId)
         {
             try
@@ -129,11 +119,59 @@ namespace Target.Services
             }
         }
 
+        #endregion
+
+        #region Events Specific Logic
+
+        // עדכון אירוע קיים (כולל סטטוס בוצע/לא בוצע)
+        public async Task UpdateEventAsync(Event evt)
+        {
+            try
+            {
+                await firebaseClient.Child("events").Child(evt.Id).PutAsync(evt);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating event: {ex.Message}");
+                throw; // זורק את השגיאה הלאה כדי שה-ViewModel יידע שהעדכון נכשל
+            }
+        }
+
+        // פונקציה למחיקת כל האימונים ששייכים לאותה תוכנית
+        public async Task DeleteEventsByGroupIdAsync(string planGroupId)
+        {
+            try
+            {
+                // משיכת כל האירועים
+                var allEvents = await GetAllDocumentsAsync("events");
+                if (allEvents == null) return;
+
+                // מעבר על כל האירועים ומחיקת אלו ששייכים לתוכנית
+                foreach (var item in allEvents)
+                {
+                    // בדיקה האם לאירוע יש PlanGroupId והאם הוא תואם
+                    if (item.Value.ContainsKey("PlanGroupId") &&
+                        item.Value["PlanGroupId"]?.ToString() == planGroupId)
+                    {
+                        // מחיקת האירוע הספציפי
+                        await DeleteDocumentAsync("events", item.Key);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting plan group: {ex.Message}");
+            }
+        }
+
+        #endregion
+
+        #region Units Logic
+
         public async Task UploadUnitsAsync(List<Unit> units)
         {
             foreach (var unit in units)
             {
-                // וודא שיש Id
                 if (string.IsNullOrEmpty(unit.Id))
                     unit.Id = Guid.NewGuid().ToString();
 
@@ -159,24 +197,23 @@ namespace Target.Services
         {
             try
             {
-                // אנחנו שואבים את כל הצומת כרשימה אחת, כי זה פורמט מערך (Array)
                 var result = await firebaseClient
                     .Child("units")
                     .OnceSingleAsync<List<Unit>>();
 
                 if (result == null) return new List<Unit>();
 
-                // סינון ה-nullים שהופיעו בלוג שלך ושמירה רק על יחידות אמיתיות
                 return result
                     .Where(u => u != null)
                     .ToList();
             }
             catch (Exception ex)
             {
-                // זה ידפיס לך בדיוק מה השגיאה ב-Output
                 Console.WriteLine($"❌ Error fetching units: {ex.Message}");
                 return new List<Unit>();
             }
         }
+
+        #endregion
     }
 }

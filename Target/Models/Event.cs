@@ -14,5 +14,6 @@
 
         public string? RelatedUnit { get; set; } // שם היחידה (למשל "504")
         public string? PlanGroupId { get; set; } // מזהה ייחודי לכל התוכנית שנוצרה יחד
+        public bool IsCompleted { get; set; }
     }
 }

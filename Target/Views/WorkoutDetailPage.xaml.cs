@@ -6,6 +6,6 @@ public partial class WorkoutDetailPage : ContentPage
 	public WorkoutDetailPage()
 	{
 		InitializeComponent();
-		BindingContext = new WorkoutDetailViewModel(App.FirebaseService);
+		BindingContext = new WorkoutDetailViewModel();
     }
 }

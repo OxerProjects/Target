@@ -1,50 +1,91 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Target.ViewModels"
-             xmlns:services="clr-namespace:Target.Services"
              x:Class="Target.Views.WorkoutDetailPage"
-             Title="{Binding PageTitle}">
-
+             Title="{Binding PageTitle}"
+             FlowDirection="RightToLeft">
     <ScrollView>
         <VerticalStackLayout Spacing="15" Padding="20">
 
             <Border StrokeShape="RoundRectangle 10" BackgroundColor="#2C2C2C" Padding="15">
                 <VerticalStackLayout>
-                    <Label Text="{Binding EventData.Date, StringFormat='{0:dd/MM/yyyy}'}" TextColor="Gray"/>
-                    <Label Text="{Binding EventData.Title}" FontSize="24" FontAttributes="Bold" TextColor="White"/>
-                    <Label Text="{Binding EventData.Description}" TextColor="#E0E0E0"/>
+                    <Label Text="{Binding WorkoutEvent.Date, StringFormat='{0:dd/MM/yyyy}'}" FontSize="19" TextColor="Gray"/>
+
+                    <Label Text="{Binding WorkoutEvent.Title}" 
+                           FontSize="24" 
+                           FontAttributes="Bold" 
+                           TextColor="White"/>
+
+                    <Label Text="{Binding WorkoutEvent.Description}" 
+                           TextColor="#E0E0E0" FontSize="18"/>
+
                     <HorizontalStackLayout Spacing="10" Margin="0,10,0,0">
-                        <Label Text="{Binding EventData.StartTime, StringFormat='{0:hh\\:mm}'}" TextColor="#FFD700"/>
-                        <Label Text="-" TextColor="#FFD700"/>
-                        <Label Text="{Binding EventData.EndTime, StringFormat='{0:hh\\:mm}'}" TextColor="#FFD700"/>
+                        <Label Text="{Binding WorkoutEvent.StartTime, StringFormat='{0:hh\\:mm}'}" FontSize="20" TextColor="{StaticResource Primary}"/>
+                        <Label Text="-" TextColor="{StaticResource Primary}" FontSize="20"/>
+                        <Label Text="{Binding WorkoutEvent.EndTime, StringFormat='{0:hh\\:mm}'}" FontSize="20" TextColor="{StaticResource Primary}"/>
                     </HorizontalStackLayout>
                 </VerticalStackLayout>
             </Border>
 
-            <Label Text="תרגילים:" FontSize="20" FontAttributes="Bold" Margin="0,10,0,5"/>
+            <Label Text="תרגילים:" FontSize="20" FontAttributes="Bold" Margin="0,10,0,5" TextColor="White"/>
 
             <CollectionView ItemsSource="{Binding Exercises}" HeightRequest="400">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Border Stroke="Gray" StrokeThickness="1" StrokeShape="RoundRectangle 10" Margin="0,5" Padding="10" BackgroundColor="#1E1E1E">
-                            <Grid ColumnDefinitions="Auto, *">
-                                <Image Grid.Column="0" 
-                           Source="dumbbell_icon.png" 
-                           WidthRequest="50" 
-                           HeightRequest="50" 
-                           Aspect="AspectFit" 
-                           Margin="0,0,10,0"/>
+                        <Border Stroke="Gray" 
+                    StrokeThickness="1" 
+                    StrokeShape="RoundRectangle 10" 
+                    Margin="0,5" 
+                    Padding="0" 
+                    BackgroundColor="#1E1E1E">
+                            <Grid RowDefinitions="200, Auto">
+                                <Image Grid.Row="0" 
+                           Source="{Binding ImageUrl}" 
+                           Aspect="AspectFill"
+                           HorizontalOptions="Fill"
+                           HeightRequest="200"/>
 
-                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
-                                    <Label Text="{Binding Name}" FontSize="18" FontAttributes="Bold" TextColor="White"/>
-                                    <Label Text="{Binding Description}" FontSize="14" TextColor="#CCCCCC"/>
-                                    <Label Text="{Binding DurationOrReps}" FontSize="14" FontAttributes="Bold" TextColor="#FFD700" Margin="0,5,0,0"/>
+                                <VerticalStackLayout Grid.Row="1" Padding="15" Spacing="5">
+                                    <Label Text="{Binding Name}" 
+                               FontSize="20" 
+                               FontAttributes="Bold" 
+                               TextColor="White" 
+                               HorizontalOptions="End"/> 
+                                    <Label Text="{Binding Description}" 
+                               FontSize="16" 
+                               TextColor="#CCCCCC"
+                               HorizontalOptions="End"/>
+
+                                    <Label Text="{Binding DurationOrReps}" 
+                               FontSize="14" 
+                               FontAttributes="Bold" 
+                               TextColor="{StaticResource Primary}"
+                               HorizontalOptions="End"/>
                                 </VerticalStackLayout>
                             </Grid>
                         </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
+
+            <Frame BackgroundColor="#333333" Padding="15" CornerRadius="10" Margin="0,10,0,10" BorderColor="#00FF00">
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="15">
+
+                    <CheckBox IsChecked="{Binding IsCompleted}" 
+                              Color="#00FF00" />
+
+                    <Label Text="סמן אימון כבוצע ✔️" 
+                           VerticalOptions="Center" 
+                           FontSize="18" 
+                           TextColor="White" 
+                           FontAttributes="Bold">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ToggleCompletionCommand}"/>
+                        </Label.GestureRecognizers>
+                    </Label>
+
+                </HorizontalStackLayout>
+            </Frame>
 
             <Button Text="מחק אימון זה בלבד" 
                     Command="{Binding DeleteSingleWorkoutCommand}" 
