@@ -1,62 +1,159 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Target.Models;
+using System.Text.Json;
 using Target.Services;
 
 namespace Target.ViewModels
 {
     public partial class QuizViewModel : ObservableObject
     {
+        private readonly AiService _aiService;
+
+        // --- Properties ---
+
         private string question;
-        public string? Question
+        public string Question
         {
             get => question;
+            set { question = value; OnPropertyChanged(); }
+        }
+
+        private string[] answers = new string[4];
+        public string[] Answers
+        {
+            get => answers;
+            set { answers = value; OnPropertyChanged(); }
+        }
+
+        private string result;
+        public string Result
+        {
+            get => result;
+            set { result = value; OnPropertyChanged(); }
+        }
+
+        private bool isBusy;
+        public bool IsBusy
+        {
+            get => isBusy;
             set
             {
-                question = value;
+                isBusy = value;
                 OnPropertyChanged();
+                // ברגע ש-IsBusy משתנה, אנחנו מודיעים שגם IsNotBusy השתנה
+                OnPropertyChanged(nameof(IsNotBusy));
             }
         }
+
+        // זה הטריק שחוסך לנו את ה-Converter בשגיאה שקיבלת!
+        public bool IsNotBusy => !IsBusy;
+
         private int correctIndex;
-
-        public string[] Answers { get; } = new string[4];
-
         public IRelayCommand<int> AnswerCommand { get; }
-        public string Result { get; private set; }
+        public IRelayCommand NextQuestionCommand { get; }
+
+        // --- Constructor ---
 
         public QuizViewModel()
         {
+            // שים כאן את המפתח שלך
+            _aiService = new AiService(new HttpClient(), "AIzaSyCwLzoBGQBUI1KfEeajtBO_D80g6-EpVfQ");
+
             AnswerCommand = new RelayCommand<int>(CheckAnswer);
+            NextQuestionCommand = new RelayCommand(LoadQuestionAsync);
+
             LoadQuestionAsync();
         }
 
+        // --- Logic ---
+
         private async void LoadQuestionAsync()
         {
-            AiService aiService1 = new AiService(new HttpClient(), "AIzaSyCZy2DIL93VsmgEZzJ3tnfscuT5Q71v6O8");
+            if (IsBusy) return;
+            IsBusy = true; // נועל כפתורים ומראה טעינה
 
-            question = await aiService1.GenerateAsync("Create an Question about the Israeli militery and units, in Hebrew, the Answers are spoze to be short, write only the Question without other text.");
+            Result = "טוען שאלה חדשה...";
+            Question = "";
+            Answers = new string[] { "", "", "", "" };
 
-            Question = question;
+            string prompt = @"
+                Generate a tough trivia question about IDF (Israel Defense Forces) history, units, or wars in Hebrew.
+                Output valid JSON only using this schema:
+                {
+                  ""q"": ""Question text in Hebrew"",
+                  ""c"": ""Correct Answer (max 4 words)"",
+                  ""w"": [""Wrong1"", ""Wrong2"", ""Wrong3""]
+                }";
 
-            Random rand = new Random();
-            int correct = rand.Next(4);
-            correctIndex = correct;
-            for (int i = 0; i < 4; i++)
+            var jsonResponse = await _aiService.GenerateAsync(prompt);
+
+            if (string.IsNullOrEmpty(jsonResponse))
             {
-                if(i == correct)
-                    Answers[i] = await aiService1.GenerateAsync($"Create a Correct Answer of {question}, in Hebrew, make it short max 5 words and optemized, write only the answer without other text.");
-                else
-                    Answers[i] = await aiService1.GenerateAsync($"Create an uncorrect Answer of {question}, in Hebrew, make it short max 5 words and optemized, write only the answer without other text.");
-
+                Result = "שגיאה בטעינה. בדוק אינטרנט או מפתח API.";
+                IsBusy = false;
+                return;
             }
-            OnPropertyChanged(nameof(Answers));
+
+            try
+            {
+                jsonResponse = jsonResponse.Replace("```json", "").Replace("```", "").Trim();
+
+                int startIndex = jsonResponse.IndexOf('{');
+                int endIndex = jsonResponse.LastIndexOf('}');
+                if (startIndex >= 0 && endIndex > startIndex)
+                {
+                    jsonResponse = jsonResponse.Substring(startIndex, endIndex - startIndex + 1);
+                }
+
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var quizData = JsonSerializer.Deserialize<QuizData>(jsonResponse, options);
+
+                if (quizData != null)
+                {
+                    Question = quizData.q;
+                    Random rand = new Random();
+                    correctIndex = rand.Next(4);
+
+                    var tempAnswers = new string[4];
+                    int wrongCount = 0;
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        if (i == correctIndex)
+                            tempAnswers[i] = quizData.c;
+                        else
+                            tempAnswers[i] = quizData.w[wrongCount++];
+                    }
+
+                    Answers = tempAnswers;
+                    Result = "";
+                }
+            }
+            catch (Exception ex)
+            {
+                Result = "שגיאה בפענוח הנתונים.";
+            }
+            finally
+            {
+                IsBusy = false; // משחרר את הכפתורים
+            }
         }
 
         private void CheckAnswer(int index)
         {
-            Result = index == correctIndex
-                ? "✅ תשובה נכונה!"
-                : "❌ תשובה לא נכונה";
+            if (string.IsNullOrEmpty(Answers[0])) return;
+
+            if (index == correctIndex)
+                Result = "✅ נכון מאוד! (לחץ לטעון שאלה הבאה)";
+            else
+                Result = "❌ טעות, נסה שוב.";
         }
+    }
+
+    public class QuizData
+    {
+        public string q { get; set; }
+        public string c { get; set; }
+        public List<string> w { get; set; }
     }
 }

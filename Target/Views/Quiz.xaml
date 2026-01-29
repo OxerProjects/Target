@@ -2,48 +2,69 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Target.Views.Quiz"
-             Title="שאלה יומית">
+             Title="חידון צה״ל"
+             FlowDirection="RightToLeft">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15" VerticalOptions="Center">
 
-    <VerticalStackLayout Padding="20" Spacing="15">
+            <Label Text="{Binding Question}"
+                   FontSize="22"
+                   FontAttributes="Bold"
+                   TextColor="White"
+                   HorizontalTextAlignment="Center"
+                   Margin="0,0,0,20"/>
 
-        <Label Text="{Binding Question}"
-           FontSize="22"
-           TextColor="White"
-           FontFamily="NarkisBold"
-           HorizontalTextAlignment="Center"/>
+            <Button Text="{Binding Answers[0]}" 
+                    Command="{Binding AnswerCommand}" 
+                    IsEnabled="{Binding IsNotBusy}"
+                    FontSize="18">
+                <Button.CommandParameter>
+                    <x:Int32>0</x:Int32>
+                </Button.CommandParameter>
+            </Button>
 
-        <Button Text="{Binding Answers[0]}" FontSize="15"
-        Command="{Binding AnswerCommand}">
-            <Button.CommandParameter>
-                <x:Int32>0</x:Int32>
-            </Button.CommandParameter>
-        </Button>
+            <Button Text="{Binding Answers[1]}" 
+                    Command="{Binding AnswerCommand}" 
+                    IsEnabled="{Binding IsNotBusy}"
+                    FontSize="18">
+                <Button.CommandParameter>
+                    <x:Int32>1</x:Int32>
+                </Button.CommandParameter>
+            </Button>
 
-        <Button Text="{Binding Answers[1]}" FontSize="15"
-        Command="{Binding AnswerCommand}">
-            <Button.CommandParameter>
-                <x:Int32>1</x:Int32>
-            </Button.CommandParameter>
-        </Button>
+            <Button Text="{Binding Answers[2]}" 
+                    Command="{Binding AnswerCommand}" 
+                    IsEnabled="{Binding IsNotBusy}"
+                    FontSize="18">
+                <Button.CommandParameter>
+                    <x:Int32>2</x:Int32>
+                </Button.CommandParameter>
+            </Button>
 
-        <Button Text="{Binding Answers[2]}" FontSize="15"
-        Command="{Binding AnswerCommand}">
-            <Button.CommandParameter>
-                <x:Int32>2</x:Int32>
-            </Button.CommandParameter>
-        </Button>
+            <Button Text="{Binding Answers[3]}" 
+                    Command="{Binding AnswerCommand}" 
+                    IsEnabled="{Binding IsNotBusy}"
+                    FontSize="18">
+                <Button.CommandParameter>
+                    <x:Int32>3</x:Int32>
+                </Button.CommandParameter>
+            </Button>
 
-        <Button Text="{Binding Answers[3]}" FontSize="15"
-        Command="{Binding AnswerCommand}">
-            <Button.CommandParameter>
-                <x:Int32>3</x:Int32>
-            </Button.CommandParameter>
-        </Button>
+            <Label Text="{Binding Result}"
+                   FontSize="22"
+                   TextColor="{StaticResource Primary}"
+                   FontAttributes="Bold"
+                   HorizontalTextAlignment="Center"
+                   Margin="0,20,0,0"/>
 
+            <Button Text="שאלה הבאה"
+                    Command="{Binding NextQuestionCommand}"
+                    IsEnabled="{Binding IsNotBusy}"
+                    BackgroundColor="Gray"
+                    TextColor="White"
+                    Margin="0,20,0,0"/>
 
-        <Label Text="{Binding Result}"
-           FontSize="20"
-           HorizontalTextAlignment="Center"/>
-    </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
 
 </ContentPage>

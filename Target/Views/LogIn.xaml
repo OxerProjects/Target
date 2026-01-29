@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!-- LogInPage: -->
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Target.Views.LogIn"
              Shell.NavBarIsVisible="False" Shell.TabBarIsVisible="False"
              FlowDirection="RightToLeft"
              Title="LogIn">
+    
     <Grid RowDefinitions="Auto,*" Padding="30">
         <!-- Logo -->
-        <Image Grid.Row="0"
+        <Image
+           x:Name="Logo"
+           Grid.Row="0"
            Source="logo.png"
            HeightRequest="50"
            HorizontalOptions="Center"
@@ -19,7 +23,9 @@
         HorizontalOptions="Center"
         VerticalOptions="Center">
 
-            <Label Text="התחברות"
+            <Label
+               x:Name="Title"
+               Text="התחברות"
                FontFamily="NarkisBold"
                FontSize="50"
                HorizontalOptions="Center" />
@@ -31,7 +37,8 @@
                 StrokeShape="RoundRectangle 15"
                 WidthRequest="300">
                 <Entry 
-                   Placeholder="שם משתמש"
+                   x:Name="EmailEntry"
+                   Placeholder="אמייל"
                    Text="{Binding Email}"/>
             </Border>
 
@@ -42,24 +49,27 @@
                 StrokeShape="RoundRectangle 15"
                 WidthRequest="300">
                 <Entry 
+                    x:Name="PasswordEntry"
                     Placeholder="סיסמה"
                     Text="{Binding Password, Mode=TwoWay}"
                     IsPassword="True"
                     FlowDirection="RightToLeft"
                     HorizontalTextAlignment="End"
                     Style="{StaticResource AppEntryStyle}"/>
-
             </Border>
 
             <!-- error -->
             <Label
+                x:Name="Error"
                 IsVisible="{Binding HasError}"
-                TextColor="White"
+                TextColor="Red"
                 FontSize="15"
                 Text="{Binding UsernameError}" />
 
             <!-- Button -->
-            <Button Text="התחברות"
+            <Button
+                x:Name="SubmitButton"
+                Text="התחברות"
                 FontFamily="NarkisBold"
                 FontSize="30"
                 WidthRequest="300"

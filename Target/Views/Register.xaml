@@ -9,25 +9,32 @@
         <VerticalStackLayout Spacing="10" Padding="30" HorizontalOptions="Center">
 
             <!-- Logo -->
-            <Image Source="logo.png"
+            <Image
+               x:Name="Logo"
+               Source="logo.png"
                HeightRequest="50"
                HorizontalOptions="Center"
                Margin="0,20,0,20"/>
 
             <!-- Title -->
-            <Label Text="הרשמה"
+            <Label
+               x:Name="Title"
+               Text="הרשמה"
                FontFamily="NarkisBold"
                FontSize="50"
                TextColor="White"
                HorizontalOptions="Center"/>
 
             <!-- FullName -->
-            <Border Stroke="{StaticResource Primary}"
+            <Border
+                Stroke="{StaticResource Primary}"
                 StrokeThickness="2"
                 BackgroundColor="Transparent"
                 StrokeShape="RoundRectangle 15"
                 WidthRequest="300">
-                <Entry Placeholder="שם מלא"
+                <Entry
+                   x:Name="NameEntry"
+                   Placeholder="שם מלא"
                    BackgroundColor="Transparent"
                    TextColor="White"
                    FontFamily="NarkisBold"
@@ -35,17 +42,16 @@
                    Margin="10,0"
                    Text="{Binding FullName, Mode=TwoWay}"/>
             </Border>
-            <Label
-                IsVisible="{Binding HasError}"
-                Text="{Binding FullNameError}" />
-
             <!-- Email -->
-            <Border Stroke="{StaticResource Primary}"
+            <Border
+                Stroke="{StaticResource Primary}"
                 StrokeThickness="2"
                 BackgroundColor="Transparent"
                 StrokeShape="RoundRectangle 15"
                 WidthRequest="300">
-                <Entry Placeholder="אימייל"
+                <Entry
+                   x:Name="EmailEntry"
+                   Placeholder="אימייל"
                    Text="{Binding Email, Mode=TwoWay}"
                    BackgroundColor="Transparent"
                    TextColor="White"
@@ -53,14 +59,16 @@
                    FontSize="30"
                    Margin="10,0"/>
             </Border>
-
             <!-- Phone -->
-            <Border Stroke="{StaticResource Primary}"
+            <Border
+                Stroke="{StaticResource Primary}"
                 StrokeThickness="2"
                 BackgroundColor="Transparent"
                 StrokeShape="RoundRectangle 15"
                 WidthRequest="300">
-                <Entry Placeholder="טלפון"
+                <Entry
+                   x:Name="PhoneEntry"
+                   Placeholder="טלפון"
                    Text="{Binding MobileNo, Mode=TwoWay}"
                    BackgroundColor="Transparent"
                    TextColor="White"
@@ -71,12 +79,14 @@
 
             <!-- Age, Weight, Gender -->
             <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
-                <Border Stroke="{StaticResource Primary}"
+                <Border
+                    Stroke="{StaticResource Primary}"
                     StrokeThickness="2"
                     BackgroundColor="Transparent"
                     StrokeShape="RoundRectangle 15"
                     WidthRequest="90">
                     <DatePicker
+                       x:Name="BirthDayEntry"
                        BackgroundColor="Transparent"
                        TextColor="White"
                        FontFamily="NarkisBold"
@@ -85,16 +95,18 @@
 
                 <!-- DateError -->
                 <Label
-                IsVisible="{Binding HasError}"
-                Style="{StaticResource ErrorLabelStyle}"
-                Text="{Binding BirthDateError}" />
+                    IsVisible="{Binding HasError}"
+                    Style="{StaticResource ErrorLabelStyle}"
+                    Text="{Binding BirthDateError}" />
 
                 <Border Stroke="{StaticResource Primary}"
                     StrokeThickness="2"
                     BackgroundColor="Transparent"
                     StrokeShape="RoundRectangle 15"
                     WidthRequest="90">
-                    <Entry Placeholder="גובה"
+                    <Entry
+                       x:Name="HeightEntry"
+                       Placeholder="גובה"
                        Text="{Binding Height, Mode=TwoWay}"
                        BackgroundColor="Transparent"
                        TextColor="White"
@@ -108,7 +120,9 @@
                     BackgroundColor="Transparent"
                     StrokeShape="RoundRectangle 15"
                     WidthRequest="90">
-                    <Entry Placeholder="משקל"
+                    <Entry
+                       x:Name="WeightEntry"
+                       Placeholder="משקל"
                        Text="{Binding Weight, Mode=TwoWay}"
                        BackgroundColor="Transparent"
                        TextColor="White"
@@ -118,39 +132,36 @@
                 </Border>
             </HorizontalStackLayout>
 
-            <!-- Dropdown -->
-            <Border Stroke="{StaticResource Primary}"
-                StrokeThickness="2"
-                BackgroundColor="Transparent"
-                StrokeShape="RoundRectangle 15"
-                WidthRequest="300">
-                <Picker Title="אני מכוון ל..." 
-                    TextColor="White"
-                    FontFamily="NarkisBold"
-                    HorizontalTextAlignment="Center"
-                    FontSize="25"
-                    BackgroundColor="Transparent"/>
-            </Border>
-
             <!-- Password -->
             <Border Stroke="{StaticResource Primary}"
                 StrokeThickness="2"
                 BackgroundColor="Transparent"
                 StrokeShape="RoundRectangle 15"
                 WidthRequest="300">
-                <Entry Placeholder="סיסמה"
-                Text="{Binding Password, Mode=TwoWay}"
-                BackgroundColor="Transparent"
-                FontFamily="NarkisBold"
-                TextColor="White"
-                FontSize="30"
-                IsPassword="True"
-                Margin="10,0"/>
+                <Entry
+                    x:Name="PasswordEntry"
+                    Placeholder="סיסמה"
+                    Text="{Binding Password, Mode=TwoWay}"
+                    BackgroundColor="Transparent"
+                    FontFamily="NarkisBold"
+                    TextColor="White"
+                    FontSize="30"
+                    IsPassword="True"
+                    Margin="10,0"/>
 
             </Border>
 
+            <Label
+                x:Name="Error"
+                TextColor="Red"
+                FontSize="16"
+                IsVisible="{Binding HasError}"
+                Text="{Binding ErrorMessage}" />
+
             <!-- Button -->
-            <Button Text="הרשם"
+            <Button
+                x:Name="SubmitButton"
+                Text="הרשם"
                 FontFamily="NarkisBold"
                 FontSize="30"
                 WidthRequest="300"
@@ -164,18 +175,19 @@
                 />
 
             <Button
-            Text="חזור >"
-            FontFamily="NarkisBold"
-            FontSize="30"
-            WidthRequest="300"
-            Padding="3,3,3,3"
-            TextColor="White"
-            BackgroundColor="Transparent"
-            BorderColor="{StaticResource Primary}"
-            BorderWidth="2"
-            CornerRadius="15"
-            HorizontalOptions="Center"
-            Clicked="GoBack"/>
+                x:Name="BackButton"
+                Text="חזור >"
+                FontFamily="NarkisBold"
+                FontSize="30"
+                WidthRequest="300"
+                Padding="3,3,3,3"
+                TextColor="White"
+                BackgroundColor="Transparent"
+                BorderColor="{StaticResource Primary}"
+                BorderWidth="2"
+                CornerRadius="15"
+                HorizontalOptions="Center"
+                Clicked="GoBack"/>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

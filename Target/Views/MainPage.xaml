@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!-- MainPage: -->
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Target.Views.MainPage"
@@ -13,46 +14,46 @@
         VerticalOptions="Center">
 
             <Image
-            Source="logo.png"
-            HeightRequest="50"
-            HorizontalOptions="Center"
-            Margin="0,0,0,200"/>
+                x:Name="Logo"
+                Source="logo.png"
+                HeightRequest="50"
+                HorizontalOptions="Center"
+                Margin="0,0,0,200"/>
 
             <Image
-            Source="temp1.png"
-            HeightRequest="200"
-            HorizontalOptions="Center" />
+                x:Name="ShowImage"
+                Source="temp1.png"
+                HeightRequest="200"
+                HorizontalOptions="Center" />
 
             <Button
-            Text="הרשמה"
-            FontFamily="NarkisBold"
-            FontSize="30"
-            TextColor="White"
-            BorderColor="Black"
-            WidthRequest="300"
-            Padding="3,3,3,3"
-            BorderWidth="2"
-            CornerRadius="15"
-            HorizontalOptions="Center"
-            Clicked="OnRegisterClicked"/>
+                x:Name="RegisterButton"
+                Text="הרשמה"
+                FontFamily="NarkisBold"
+                FontSize="30"
+                TextColor="White"
+                BorderColor="Black"
+                WidthRequest="300"
+                Padding="3,3,3,3"
+                BorderWidth="2"
+                CornerRadius="15"
+                HorizontalOptions="Center"
+                Clicked="OnRegisterClicked"/>
 
             <Button
-            x:Name="LogInButton"
-            Text="התחברות"
-            FontFamily="NarkisBold"
-            FontSize="30"
-            WidthRequest="300"
-            Padding="3,3,3,3"
-            TextColor="White"
-            BackgroundColor="Transparent"
-            BorderColor="{StaticResource Primary}"
-            BorderWidth="2"
-            CornerRadius="15"
-            HorizontalOptions="Center"
-            Clicked="OnLogInClicked"/>
-
-
-
+                x:Name="LogInButton"
+                Text="התחברות"
+                FontFamily="NarkisBold"
+                FontSize="30"
+                WidthRequest="300"
+                Padding="3,3,3,3"
+                TextColor="White"
+                BackgroundColor="Transparent"
+                BorderColor="{StaticResource Primary}"
+                BorderWidth="2"
+                CornerRadius="15"
+                HorizontalOptions="Center"
+                Clicked="OnLogInClicked"/>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

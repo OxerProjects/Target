@@ -9,9 +9,9 @@ namespace Target.Services
         private readonly HttpClient _httpClient;
         private readonly string _apiKey;
 
-        // שים לב: השם המדויק מה-JSON ששלחת
+        // שימוש במודל המהיר והיציב ביותר ל-JSON
         private const string MODEL_NAME = "gemini-2.5-flash";
-        private const string BASE_URL = "https://generativelanguage.googleapis.com/v1/models";
+        private const string BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models";
 
         public AiService(HttpClient httpClient, string apiKey)
         {
@@ -21,7 +21,6 @@ namespace Target.Services
 
         public async Task<string> GenerateAsync(string prompt)
         {
-            // בניית ה-URL עם המודל הנכון
             string url = $"{BASE_URL}/{MODEL_NAME}:generateContent?key={_apiKey}";
 
             var requestBody = new
@@ -30,11 +29,11 @@ namespace Target.Services
                 {
                     new { parts = new[] { new { text = prompt } } }
                 },
-                // הוספת thinking=true אם תרצה לנצל את יכולות ה"מחשבה" של מודל 2.5
-                generationConfig = new {
-                    temperature = 0.4,    // מוריד יצירתיות ואת הצורך בחשיבה
+                generationConfig = new
+                {
+                    temperature = 0.5,
+                    responseMimeType = "application/json"
                 }
-
             };
 
             try
@@ -43,24 +42,29 @@ namespace Target.Services
                 var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PostAsync(url, content);
-                string responseString = await response.Content.ReadAsStringAsync();
-                Debug.WriteLine(responseString);
+
                 if (response.IsSuccessStatusCode)
                 {
+                    string responseString = await response.Content.ReadAsStringAsync();
                     using var doc = JsonDocument.Parse(responseString);
-                    return doc.RootElement
-                        .GetProperty("candidates")[0]
-                        .GetProperty("content")
-                        .GetProperty("parts")[0]
-                        .GetProperty("text")
-                        .GetString()?.Trim();
+
+                    // חילוץ הטקסט בזהירות
+                    if (doc.RootElement.TryGetProperty("candidates", out var candidates) && candidates.GetArrayLength() > 0)
+                    {
+                        return candidates[0]
+                           .GetProperty("content")
+                           .GetProperty("parts")[0]
+                           .GetProperty("text")
+                           .GetString();
+                    }
                 }
 
-                return $"API Error: {response.StatusCode}. Details: {responseString}";
+                return null;
             }
             catch (Exception ex)
             {
-                return $"Exception: {ex.Message}";
+                Debug.WriteLine($"Exception: {ex.Message}");
+                return null;
             }
         }
     }
